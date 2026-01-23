@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  backend:
+    image: javad447/bookshop-backend:latest
+    container_name: bookshop-backend
+    ports:
+      - "7000:7000"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:7000
+    networks:
+      - bookshop-net
+
+  frontend:
+    image: javad447/bookshop-frontend:latest
+    container_name: bookshop-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_HOST: http://backend:7000
+      API_HOST: http://backend:7000
+    depends_on:
+      - backend
+    networks:
+      - bookshop-net
+
+networks:
+  bookshop-net:
+    driver: bridge

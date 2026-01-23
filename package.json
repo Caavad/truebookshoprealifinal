@@ -1,0 +1,29 @@
+{
+  "name": "bookshop-fullstack",
+  "version": "1.0.0",
+  "description": "Full-stack BookShop application with ASP.NET Core API and Next.js frontend",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:frontend\"",
+    "dev:api": "cd BookShopAPI && dotnet run --urls=https://localhost:7000",
+    "dev:frontend": "cd frondbookshop && npm run dev",
+    "build": "npm run build:api && npm run build:frontend",
+    "build:api": "cd BookShopAPI && dotnet build",
+    "build:frontend": "cd frondbookshop && npm run build",
+    "install:all": "npm run install:frontend",
+    "install:frontend": "cd frondbookshop && npm install",
+    "clean": "npm run clean:api && npm run clean:frontend",
+    "clean:api": "cd BookShopAPI && dotnet clean",
+    "clean:frontend": "cd frondbookshop && npm run build --if-present && rm -rf .next"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "bookshop",
+    "aspnet-core",
+    "nextjs",
+    "fullstack"
+  ],
+  "author": "BookShop Team",
+  "license": "MIT"
+}

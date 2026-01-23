@@ -1,0 +1,8 @@
+2025-11-02 05:01:10.465 +04:00 [INF] Request starting HTTP/2 GET https://localhost:7000/ - null null
+2025-11-02 05:01:11.035 +04:00 [INF] HTTP GET / responded 404 in 4.1882 ms
+2025-11-02 05:01:11.078 +04:00 [INF] Request finished HTTP/2 GET https://localhost:7000/ - 404 0 null 631.3148ms
+2025-11-02 05:01:11.099 +04:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:7000/, Response status code: 404
+2025-11-02 05:01:16.649 +04:00 [INF] Request starting HTTP/2 GET https://localhost:7000/ - null null
+2025-11-02 05:01:16.670 +04:00 [INF] HTTP GET / responded 404 in 0.1032 ms
+2025-11-02 05:01:16.681 +04:00 [INF] Request finished HTTP/2 GET https://localhost:7000/ - 404 0 null 32.5276ms
+2025-11-02 05:01:16.697 +04:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:7000/, Response status code: 404

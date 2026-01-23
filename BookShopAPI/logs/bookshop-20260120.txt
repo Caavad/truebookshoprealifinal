@@ -1,0 +1,25 @@
+2026-01-20 02:20:48.124 +04:00 [INF] Executed DbCommand (26ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-01-20 02:20:48.299 +04:00 [INF] Executed DbCommand (93ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+
+IF EXISTS
+    (SELECT *
+     FROM [sys].[objects] o
+     WHERE [o].[type] = 'U'
+     AND [o].[is_ms_shipped] = 0
+     AND NOT EXISTS (SELECT *
+         FROM [sys].[extended_properties] AS [ep]
+         WHERE [ep].[major_id] = [o].[object_id]
+             AND [ep].[minor_id] = 0
+             AND [ep].[class] = 1
+             AND [ep].[name] = N'microsoft_database_tools_support'
+    )
+)
+SELECT 1 ELSE SELECT 0
+2026-01-20 02:20:48.460 +04:00 [INF] Starting BookShop API...
+2026-01-20 02:20:48.484 +04:00 [INF] User profile is available. Using 'C:\Users\User\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-01-20 02:20:48.817 +04:00 [INF] Now listening on: http://localhost:7000
+2026-01-20 02:20:48.824 +04:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-01-20 02:20:48.826 +04:00 [INF] Hosting environment: Development
+2026-01-20 02:20:48.829 +04:00 [INF] Content root path: C:\Users\User\Desktop\truebookshopexam (1)\BookShopAll (2)\BookShopAll\BookShopAPI
+2026-01-20 02:21:25.086 +04:00 [INF] Application is shutting down...
