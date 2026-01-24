@@ -20,6 +20,7 @@ services:
     environment:
       NEXT_PUBLIC_API_HOST: http://backend:7000
       API_HOST: http://backend:7000
+      NEXTAUTH_SECRET: lawoawosdl123j12wdaisodawi
     depends_on:
       - backend
     networks:
