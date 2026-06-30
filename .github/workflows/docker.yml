@@ -1,0 +1,64 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Backend build & test
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore backend
+        run: dotnet restore ./BookShopAPI
+
+      - name: Build backend
+        run: dotnet build ./BookShopAPI --no-restore
+
+      # Frontend build
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install frontend deps
+        run: |
+          cd frondbookshop
+          npm install
+
+      - name: Build frontend
+        run: |
+          cd frondbookshop
+          npm run build
+
+      # Docker login
+      - name: Debug secrets
+        run: |
+          echo "USERNAME exists: ${{ secrets.DOCKERHUB_USERNAME != '' }}"
+          echo "TOKEN exists: ${{ secrets.DOCKERHUB_TOKEN != '' }}"
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Build and push images
+      - name: Build and push backend
+        run: |
+          docker build -t javad447/bookshop-backend:latest ./BookShopAPI
+          docker push javad447/bookshop-backend:latest
+
+      - name: Build and push frontend
+        run: |
+          docker build -t javad447/bookshop-frontend:latest ./frondbookshop
+          docker push javad447/bookshop-frontend:latest
