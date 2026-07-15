@@ -14,33 +14,85 @@ import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { FaGithub, FaGoogle } from "react-icons/fa";
 import { formLoginSchema, TFormLoginValues } from "../schema";
+import { getApiBaseUrl } from "@/lib/api-config";
+
+const LOGIN_ERROR_MESSAGES: Record<string, string> = {
+  USE_TRANSLATOR_LOGIN:
+    "This account is registered as a translator. Please sign in as translator.",
+  USE_USER_LOGIN:
+    "This account is registered as a user. Please sign in as user.",
+};
+
+const API_URL = getApiBaseUrl();
+
+async function getLoginModeError(
+  email: string,
+  password: string,
+  loginAs: "user" | "translator"
+): Promise<string | null> {
+  try {
+    const res = await fetch(`${API_URL}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    const role = data.user.role as string;
+
+    if (role === "Admin") return null;
+    if (loginAs === "user" && role === "Author") return "USE_TRANSLATOR_LOGIN";
+    if (loginAs === "translator" && role === "Customer") return "USE_USER_LOGIN";
+
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 export default function SignIn() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const defaultLoginAs =
+    searchParams.get("mode") === "translator" ? "translator" : "user";
 
   const form = useForm<TFormLoginValues>({
     resolver: zodResolver(formLoginSchema),
     defaultValues: {
       email: "",
       password: "",
+      loginAs: defaultLoginAs,
     },
   });
+
+  const loginAs = form.watch("loginAs");
 
   const onSubmit = async (data: TFormLoginValues) => {
     try {
       const resp = await signIn("credentials", {
-        ...data,
+        email: data.email,
+        password: data.password,
+        loginAs: data.loginAs,
         redirect: false,
       });
 
       if (resp?.ok) {
-        router.push("/");
+        router.push(data.loginAs === "translator" ? "/author" : "/");
       } else {
-        form.setError("root", { message: "Invalid credentials" });
+        const modeError = await getLoginModeError(
+          data.email,
+          data.password,
+          data.loginAs
+        );
+        const message =
+          LOGIN_ERROR_MESSAGES[modeError ?? ""] || "Invalid credentials";
+        form.setError("root", { message });
       }
     } catch (err) {
       console.error(err);
@@ -88,6 +140,38 @@ export default function SignIn() {
               </CardHeader>
               <CardContent className="px-6">
                 <div className="grid w-full items-center gap-6">
+                  <div className="flex flex-col space-y-2">
+                    <Label className="text-white font-medium">Sign in as</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => form.setValue("loginAs", "user")}
+                        className={`rounded-md border px-3 py-2 text-sm transition ${
+                          loginAs === "user"
+                            ? "border-purple-400 bg-purple-500/20 text-white"
+                            : "border-white/20 bg-white/5 text-gray-300 hover:bg-white/10"
+                        }`}
+                      >
+                        User
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => form.setValue("loginAs", "translator")}
+                        className={`rounded-md border px-3 py-2 text-sm transition ${
+                          loginAs === "translator"
+                            ? "border-purple-400 bg-purple-500/20 text-white"
+                            : "border-white/20 bg-white/5 text-gray-300 hover:bg-white/10"
+                        }`}
+                      >
+                        Translator (Author)
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-400">
+                      {loginAs === "user"
+                        ? "For readers and customers."
+                        : "For translators who publish and edit books. Admin can use either option."}
+                    </p>
+                  </div>
                   <div className="flex flex-col space-y-2">
                     <Label htmlFor="email" className="text-white font-medium">Email</Label>
                     <Input

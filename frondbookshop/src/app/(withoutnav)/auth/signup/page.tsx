@@ -27,6 +27,7 @@ export default function SignUp() {
     formState: { errors },
   } = useForm<TFormRegisterValues>({
     resolver: zodResolver(formRegisterSchema),
+    defaultValues: { role: "Customer" },
   });
 
   const onSubmit = async (data: TFormRegisterValues) => {
@@ -44,7 +45,11 @@ export default function SignUp() {
         return;
       }
 
-      router.push("/auth/signin");
+      router.push(
+        data.role === "Author"
+          ? "/auth/signin?mode=translator"
+          : "/auth/signin"
+      );
     } catch (error) {
       setError("email", { message: String(error) });
     }
@@ -105,6 +110,20 @@ export default function SignUp() {
                       {errors.email.message}
                     </span>
                   )}
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="role">Account type</Label>
+                  <select
+                    id="role"
+                    {...register("role")}
+                    className="h-10 rounded-md border border-zinc-700 bg-zinc-950 px-3 text-white"
+                  >
+                    <option value="Customer">User (read and buy books)</option>
+                    <option value="Author">Translator / Author (publish books)</option>
+                  </select>
+                  <p className="text-xs text-zinc-500">
+                    Translators can specify themselves or another person as the book author when publishing.
+                  </p>
                 </div>
                 <div className="flex flex-col space-y-1.5">
                   <Label htmlFor="password">Password</Label>

@@ -21,6 +21,11 @@ export default function ProfileButton() {
               <Link href="/admin">Admin</Link>
             </Button>
           )}
+          {(session.user?.role === "Author" || session.user?.role === "Admin") && (
+            <Button variant="outline" asChild>
+              <Link href="/author">Translator</Link>
+            </Button>
+          )}
           <Avatar>
             <AvatarImage
               src={

@@ -7,6 +7,7 @@ export default async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
   const isAuthPage = authPages.some((page) => pathname.startsWith(page));
   const isAdminPage = pathname.startsWith("/admin");
+  const isAuthorPage = pathname.startsWith("/author");
 
   const session = await getToken({
     req,
@@ -22,6 +23,15 @@ export default async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL("/auth/signin", req.url));
     }
     if (session.role !== "Admin") {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+  }
+
+  if (isAuthorPage) {
+    if (!session) {
+      return NextResponse.redirect(new URL("/auth/signin?mode=translator", req.url));
+    }
+    if (session.role !== "Author" && session.role !== "Admin") {
       return NextResponse.redirect(new URL("/", req.url));
     }
   }

@@ -29,9 +29,7 @@ export default async function ReadBookPage({
     );
   }
 
-  const paragraphs = (book.content || "No content available for this book yet.")
-    .split("\n")
-    .filter(Boolean);
+  const hasChapters = book.chapters && book.chapters.length > 0;
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
@@ -46,13 +44,33 @@ export default async function ReadBookPage({
           </Button>
         </div>
 
-        <article className="prose prose-invert max-w-none space-y-4 leading-7">
-          {paragraphs.map((paragraph, index) => (
-            <p key={index} className="text-zinc-200">
-              {paragraph}
-            </p>
-          ))}
-        </article>
+        {hasChapters ? (
+          <article className="space-y-8">
+            {book.chapters.map((chapter) => (
+              <section key={chapter.id} className="space-y-3">
+                <h2 className="text-xl font-semibold text-white">
+                  {chapter.chapterNumber}. {chapter.title}
+                </h2>
+                {chapter.content.split("\n").filter(Boolean).map((paragraph, index) => (
+                  <p key={index} className="text-zinc-200 leading-7">
+                    {paragraph}
+                  </p>
+                ))}
+              </section>
+            ))}
+          </article>
+        ) : (
+          <article className="space-y-4 leading-7">
+            {(book.content || "No content available for this book yet.")
+              .split("\n")
+              .filter(Boolean)
+              .map((paragraph, index) => (
+                <p key={index} className="text-zinc-200">
+                  {paragraph}
+                </p>
+              ))}
+          </article>
+        )}
       </div>
     </div>
   );

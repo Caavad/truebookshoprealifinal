@@ -1,8 +1,7 @@
 "use client";
 
 import { Eye } from "lucide-react";
-import Image from "next/image";
-
+import { BookCover } from "@/components/shared/book-cover";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -41,11 +40,8 @@ export function BookCard({ book }: BookCardProps) {
     <Card className="rounded-lg border-0 bg-zinc-900">
       <CardHeader className="p-0">
         <div className="aspect-[3/4] relative overflow-hidden rounded-t-lg">
-          <Image
-            src={
-              book.coverUrl ||
-              "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png"
-            }
+          <BookCover
+            src={book.coverUrl}
             alt={book.title}
             fill
             className="object-cover"

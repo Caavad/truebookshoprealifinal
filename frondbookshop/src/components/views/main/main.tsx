@@ -4,26 +4,10 @@ import { Github } from "lucide-react";
 import { GoArrowRight } from "react-icons/go";
 
 import { BookCard } from "@/components/shared/book-card/book-card";
-import { Book } from "@/helpers/interfaces/books";
+import { fetchBooks } from "@/lib/fetch-books";
 
 export default async function Main() {
-  const API_HOST = process.env.API_HOST!;
-
-  const response = await fetch(
-  `${API_HOST}/api/books`,
-  { cache: "no-store" }
-);
-
-  // const response = await fetch(`${process.env.NEXT_PUBLIC_API_HOST || 'https://localhost:7000'}/api/books`, 
-  //   {
-  //   cache: 'no-store'
-  // });
-  
-  if (!response.ok) {
-    throw new Error('Failed to fetch books');
-  }
-  
-  const items: Book[] = await response.json();
+  const { books: items, error } = await fetchBooks();
 
   return (
     <main className="container">
@@ -55,11 +39,20 @@ export default async function Main() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-          {items.map((book: Book) => (
-            <Link key={book.id} href={book.path}>
-              <BookCard key={book.id} book={book} />
-            </Link>
-          ))}
+          {error && (
+            <div className="col-span-full rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-amber-200">
+              {error}
+            </div>
+          )}
+          {items.length === 0 && !error ? (
+            <p className="col-span-full text-zinc-400">No books available yet.</p>
+          ) : (
+            items.map((book) => (
+              <Link key={book.id} href={book.path}>
+                <BookCard book={book} />
+              </Link>
+            ))
+          )}
         </div>
       </section>
     </main>

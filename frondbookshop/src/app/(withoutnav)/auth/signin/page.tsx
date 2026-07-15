@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 import SignIn from "./signin";
 
 export const metadata: Metadata = {
@@ -26,5 +27,9 @@ export const metadata: Metadata = {
 };
 
 export default function SignInPage() {
-  return <SignIn />;
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black" />}>
+      <SignIn />
+    </Suspense>
+  );
 }

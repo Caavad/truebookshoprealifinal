@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { BookCover } from "@/components/shared/book-cover";
 import CardActions from "@/components/shared/card-actions";
 import { Star } from "lucide-react";
 import { Book } from "@/helpers/interfaces/books";
@@ -40,11 +40,8 @@ export default async function BookPage({
     <div className="min-h-screen bg-black text-white p-6">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
         <div className="aspect-square relative bg-zinc-900 rounded-lg">
-          <Image
-            src={
-              book.coverUrl ||
-              "https://www.freeiconspng.com/thumbs/no-image-icon/no-image-icon-6.png"
-            }
+          <BookCover
+            src={book.coverUrl}
             alt={book.title}
             fill
             className="object-cover rounded-lg"

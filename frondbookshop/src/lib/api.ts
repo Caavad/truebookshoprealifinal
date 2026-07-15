@@ -1,4 +1,4 @@
-import { Book } from "@/helpers/interfaces/books";
+import { Book, Chapter } from "@/helpers/interfaces/books";
 
 export interface UserDto {
   id: number;
@@ -36,7 +36,17 @@ export interface BookReadDto {
   title: string;
   author: string;
   content: string;
+  chapters: Chapter[];
 }
+
+export interface CreateChapterPayload {
+  bookId: number;
+  title: string;
+  chapterNumber: number;
+  content: string;
+}
+
+export type UpdateChapterPayload = Omit<CreateChapterPayload, "bookId">;
 
 export interface CreateBookPayload {
   title: string;
@@ -62,8 +72,9 @@ export interface CreateBookPayload {
 
 export type UpdateBookPayload = Omit<CreateBookPayload, "formats">;
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:7000";
+import { getApiBaseUrl } from "@/lib/api-config";
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const apiConfig = {
   baseUrl: API_BASE_URL,
@@ -72,6 +83,7 @@ export const apiConfig = {
     users: `${API_BASE_URL}/api/users`,
     auth: `${API_BASE_URL}/api/auth`,
     orders: `${API_BASE_URL}/api/orders`,
+    chapters: `${API_BASE_URL}/api/chapters`,
   },
 };
 
@@ -118,6 +130,8 @@ export const booksApi = {
   getById: (id: number) => apiCall<Book>(`${apiConfig.endpoints.books}/${id}`),
   getRead: (id: number) =>
     apiCall<BookReadDto>(`${apiConfig.endpoints.books}/${id}/read`),
+  getMyBooks: (token: string) =>
+    apiCallAuth<Book[]>(`${apiConfig.endpoints.books}/my-books`, token),
   create: (token: string, book: CreateBookPayload) =>
     apiCallAuth<Book>(apiConfig.endpoints.books, token, {
       method: "POST",
@@ -146,4 +160,23 @@ export const usersApi = {
       `${apiConfig.endpoints.users}/${userId}/orders`,
       token
     ),
+};
+
+export const chaptersApi = {
+  getByBook: (bookId: number) =>
+    apiCall<Chapter[]>(`${apiConfig.endpoints.chapters}/book/${bookId}`),
+  create: (token: string, chapter: CreateChapterPayload) =>
+    apiCallAuth<Chapter>(apiConfig.endpoints.chapters, token, {
+      method: "POST",
+      body: JSON.stringify(chapter),
+    }),
+  update: (token: string, id: number, chapter: UpdateChapterPayload) =>
+    apiCallAuth<Chapter>(`${apiConfig.endpoints.chapters}/${id}`, token, {
+      method: "PUT",
+      body: JSON.stringify(chapter),
+    }),
+  delete: (token: string, id: number) =>
+    apiCallAuth<void>(`${apiConfig.endpoints.chapters}/${id}`, token, {
+      method: "DELETE",
+    }),
 };

@@ -3,10 +3,9 @@ import GoogleProvider from "next-auth/providers/google"
 import GitHubProvider from "next-auth/providers/github"
 import CredentialsProvider from "next-auth/providers/credentials"
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  process.env.API_HOST ||
-  "http://localhost:7000"
+import { getApiBaseUrl } from "@/lib/api-config";
+
+const API_URL = getApiBaseUrl();
 
 export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -27,12 +26,15 @@ export const authOptions: AuthOptions = {
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
+        loginAs: { label: "Login As", type: "text" },
       },
 
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           return null
         }
+
+        const loginAs = credentials.loginAs === "translator" ? "translator" : "user"
 
         try {
           const res = await fetch(`${API_URL}/api/auth/login`, {
@@ -49,12 +51,18 @@ export const authOptions: AuthOptions = {
           if (!res.ok) return null
 
           const data = await res.json()
+          const role = data.user.role as string
+
+          if (role !== "Admin") {
+            if (loginAs === "user" && role === "Author") return null
+            if (loginAs === "translator" && role === "Customer") return null
+          }
 
           return {
             id: String(data.user.id),
             email: data.user.email,
             name: `${data.user.firstName} ${data.user.lastName}`.trim(),
-            role: data.user.role,
+            role,
             accessToken: data.token,
           }
         } catch {

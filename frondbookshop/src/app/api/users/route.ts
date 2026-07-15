@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { formRegisterSchema } from "@/app/(withoutnav)/auth/schema"
+import { getApiBaseUrl } from "@/lib/api-config"
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  process.env.API_HOST ||
-  "http://localhost:7000"
+const API_URL = getApiBaseUrl()
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,7 +13,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid input" }, { status: 400 })
     }
 
-    const { fullName, email, password } = result.data
+    const { fullName, email, password, role } = result.data
     const nameParts = fullName.trim().split(/\s+/)
     const firstName = nameParts[0] || fullName
     const lastName = nameParts.slice(1).join(" ") || firstName
@@ -30,6 +28,7 @@ export async function POST(req: NextRequest) {
         firstName,
         lastName,
         password,
+        role: role || "Customer",
       }),
     })
 

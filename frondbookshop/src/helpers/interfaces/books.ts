@@ -1,12 +1,20 @@
 export interface BookFormat {
   id: number;
-  format: string; // Will be "Ebook", "Audiobook", "Paperback", "Hardcover"
+  format: string;
   language: string;
   fileSizeMB?: number;
   pages?: number;
   price: number;
   coverUrl: string;
   stockCount: number;
+}
+
+export interface Chapter {
+  id: number;
+  bookId: number;
+  title: string;
+  chapterNumber: number;
+  content: string;
 }
 
 export interface Book {
@@ -19,10 +27,12 @@ export interface Book {
   category: string;
   subCategory?: string;
   content?: string;
+  authorId?: number;
+  chapters?: Chapter[];
   rating: number;
-  quantity?: number; // Optional for compatibility
+  quantity?: number;
   stockCount: number;
   formats?: BookFormat[];
-  createdAt?: string; // ISO string from API
-  updatedAt?: string; // ISO string from API
+  createdAt?: string;
+  updatedAt?: string;
 }
