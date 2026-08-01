@@ -5,6 +5,7 @@ namespace BookShopAPI.Models;
 public enum UserRole
 {
     Customer,
+    Author,
     Admin
 }
 
@@ -46,5 +47,6 @@ public class User
     // Navigation properties
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+    public virtual ICollection<Book> AuthoredBooks { get; set; } = new List<Book>();
 }
 

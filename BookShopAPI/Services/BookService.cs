@@ -22,15 +22,33 @@ public class BookService : IBookService
     {
         var books = await _context.Books
             .Include(b => b.Formats)
+            .Include(b => b.Chapters)
             .ToListAsync();
         
         return _mapper.Map<IEnumerable<BookDto>>(books);
+    }
+
+    public async Task<IEnumerable<BookDto>> GetBooksByAuthorIdAsync(int authorId)
+    {
+        var books = await _context.Books
+            .Include(b => b.Formats)
+            .Include(b => b.Chapters)
+            .Where(b => b.AuthorId == authorId)
+            .ToListAsync();
+
+        return _mapper.Map<IEnumerable<BookDto>>(books);
+    }
+
+    public async Task<bool> IsBookOwnedByAuthorAsync(int bookId, int authorId)
+    {
+        return await _context.Books.AnyAsync(b => b.Id == bookId && b.AuthorId == authorId);
     }
 
     public async Task<BookDto?> GetBookByIdAsync(int id)
     {
         var book = await _context.Books
             .Include(b => b.Formats)
+            .Include(b => b.Chapters)
             .FirstOrDefaultAsync(b => b.Id == id);
         
         return book != null ? _mapper.Map<BookDto>(book) : null;
@@ -38,15 +56,23 @@ public class BookService : IBookService
 
     public async Task<BookReadDto?> GetBookReadAsync(int id)
     {
-        var book = await _context.Books.FindAsync(id);
+        var book = await _context.Books
+            .Include(b => b.Chapters)
+            .FirstOrDefaultAsync(b => b.Id == id);
         if (book == null) return null;
+
+        var chapters = book.Chapters.OrderBy(c => c.ChapterNumber).ToList();
+        var content = chapters.Count > 0
+            ? string.Join("\n\n", chapters.Select(c => $"{c.Title}\n\n{c.Content}"))
+            : book.Content;
 
         return new BookReadDto
         {
             Id = book.Id,
             Title = book.Title,
             Author = book.Author,
-            Content = book.Content
+            Content = content,
+            Chapters = _mapper.Map<List<ChapterDto>>(chapters)
         };
     }
 
@@ -72,9 +98,10 @@ public class BookService : IBookService
         return _mapper.Map<IEnumerable<BookDto>>(books);
     }
 
-    public async Task<BookDto> CreateBookAsync(CreateBookDto createBookDto)
+    public async Task<BookDto> CreateBookAsync(CreateBookDto createBookDto, int? authorId = null)
     {
         var book = _mapper.Map<Book>(createBookDto);
+        book.AuthorId = authorId;
         book.CreatedAt = DateTime.UtcNow;
         book.UpdatedAt = DateTime.UtcNow;
 

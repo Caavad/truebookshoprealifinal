@@ -2,6 +2,8 @@ import { BookCover } from "@/components/shared/book-cover";
 import CardActions from "@/components/shared/card-actions";
 import { Star } from "lucide-react";
 import { Book } from "@/helpers/interfaces/books";
+import Link from "next/link";
+import { BookRating } from "@/components/shared/book-rating";
 
 
 /*interface PageProps {
@@ -52,6 +54,15 @@ export default async function BookPage({
           <div>
             <h1 className="text-2xl font-bold mb-2">{book.title}</h1>
             <p className="text-zinc-400">{book.category}</p>
+            <p className="mt-2 text-zinc-300">
+              Author: {" "}
+              <Link
+                href={`/authors/${encodeURIComponent(book.author)}`}
+                className="font-medium text-white hover:underline"
+              >
+                {book.author}
+              </Link>
+            </p>
           </div>
 
           <div className="text-zinc-400">{book.stockCount} in stock</div>
@@ -72,6 +83,8 @@ export default async function BookPage({
             <h5>Description</h5>
             <p className="text-zinc-400">{book.description || "No description available."}</p>
           </div>
+
+          <BookRating bookId={book.id} />
         </div>
       </div>
     </div>

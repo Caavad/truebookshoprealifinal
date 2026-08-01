@@ -84,6 +84,38 @@ public static class DatabaseInitializer
             await ExecuteSqlScriptAsync(connectionString, sql, logger, "005_FixNullBookFields.sql");
             logger.LogInformation("Applied fix: 005_FixNullBookFields.sql");
         }
+
+        if (!await TableExistsAsync(connectionString, "Chapters"))
+        {
+            var authorPath = Path.Combine(migrationsPath, "006_AddAuthorAndChapters.sql");
+            if (File.Exists(authorPath))
+            {
+                var sql = await File.ReadAllTextAsync(authorPath);
+                await ExecuteSqlScriptAsync(connectionString, sql, logger, "006_AddAuthorAndChapters.sql");
+                logger.LogInformation("Applied schema update: 006_AddAuthorAndChapters.sql");
+            }
+        }
+
+        if (!await TableExistsAsync(connectionString, "ReadingBookmarks"))
+        {
+            var bookmarksPath = Path.Combine(migrationsPath, "007_AddReadingBookmarks.sql");
+            if (File.Exists(bookmarksPath))
+            {
+                var sql = await File.ReadAllTextAsync(bookmarksPath);
+                await ExecuteSqlScriptAsync(connectionString, sql, logger, "007_AddReadingBookmarks.sql");
+                logger.LogInformation("Applied schema update: 007_AddReadingBookmarks.sql");
+            }
+        }
+
+        // Existing books stored their text in Books.Content. Preserve that text
+        // by exposing it as chapter 1, so every existing book uses the chapter reader.
+        var chapterContentMigrationPath = Path.Combine(migrationsPath, "008_MigrateBookContentToFirstChapter.sql");
+        if (File.Exists(chapterContentMigrationPath))
+        {
+            var sql = await File.ReadAllTextAsync(chapterContentMigrationPath);
+            await ExecuteSqlScriptAsync(connectionString, sql, logger, "008_MigrateBookContentToFirstChapter.sql");
+            logger.LogInformation("Applied content-to-chapter update: 008_MigrateBookContentToFirstChapter.sql");
+        }
     }
 
     private static async Task<bool> ColumnExistsAsync(string connectionString, string tableName, string columnName)

@@ -25,7 +25,8 @@ namespace BookShopAPI.Mappings
             
             // Book mappings
             CreateMap<Book, BookDto>()
-                .ForMember(dest => dest.Formats, opt => opt.MapFrom(src => src.Formats));
+                .ForMember(dest => dest.Formats, opt => opt.MapFrom(src => src.Formats))
+                .ForMember(dest => dest.Chapters, opt => opt.MapFrom(src => src.Chapters.OrderBy(c => c.ChapterNumber)));
             
             // BookFormat mappings
             CreateMap<BookFormat, BookFormatDto>()
@@ -44,16 +45,35 @@ namespace BookShopAPI.Mappings
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
                 .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
                 .ForMember(dest => dest.Formats, opt => opt.Ignore())
+                .ForMember(dest => dest.Chapters, opt => opt.Ignore())
+                .ForMember(dest => dest.AuthorId, opt => opt.Ignore())
                 .ForMember(dest => dest.OrderItems, opt => opt.Ignore())
-                .ForMember(dest => dest.Reviews, opt => opt.Ignore());
+                .ForMember(dest => dest.Reviews, opt => opt.Ignore())
+                .ForMember(dest => dest.AuthorUser, opt => opt.Ignore());
 
             CreateMap<UpdateBookDto, Book>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
                 .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
                 .ForMember(dest => dest.Formats, opt => opt.Ignore())
+                .ForMember(dest => dest.Chapters, opt => opt.Ignore())
+                .ForMember(dest => dest.AuthorId, opt => opt.Ignore())
                 .ForMember(dest => dest.OrderItems, opt => opt.Ignore())
-                .ForMember(dest => dest.Reviews, opt => opt.Ignore());
+                .ForMember(dest => dest.Reviews, opt => opt.Ignore())
+                .ForMember(dest => dest.AuthorUser, opt => opt.Ignore());
+
+            CreateMap<Chapter, ChapterDto>();
+            CreateMap<CreateChapterDto, Chapter>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.Book, opt => opt.Ignore());
+            CreateMap<UpdateChapterDto, Chapter>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.BookId, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.Book, opt => opt.Ignore());
             
             // Order mappings
             CreateMap<Order, OrderDto>()

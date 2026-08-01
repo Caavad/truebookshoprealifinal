@@ -39,6 +39,23 @@ export interface BookReadDto {
   chapters: Chapter[];
 }
 
+export interface ReadingBookmark {
+  bookId: number;
+  chapterId: number;
+  chapterNumber: number;
+}
+
+export interface ReviewDto {
+  id: number;
+  userId: number;
+  bookId: number;
+  username: string;
+  rating: number;
+  comment?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface CreateChapterPayload {
   bookId: number;
   title: string;
@@ -84,6 +101,8 @@ export const apiConfig = {
     auth: `${API_BASE_URL}/api/auth`,
     orders: `${API_BASE_URL}/api/orders`,
     chapters: `${API_BASE_URL}/api/chapters`,
+    readingBookmarks: `${API_BASE_URL}/api/reading-bookmarks`,
+    reviews: `${API_BASE_URL}/api/reviews`,
   },
 };
 
@@ -92,11 +111,11 @@ export async function apiCall<T>(
   options?: RequestInit
 ): Promise<T> {
   const response = await fetch(endpoint, {
+    ...options,
     headers: {
       "Content-Type": "application/json",
       ...options?.headers,
     },
-    ...options,
   });
 
   if (!response.ok) {
@@ -178,5 +197,37 @@ export const chaptersApi = {
   delete: (token: string, id: number) =>
     apiCallAuth<void>(`${apiConfig.endpoints.chapters}/${id}`, token, {
       method: "DELETE",
+    }),
+};
+
+export const readingBookmarksApi = {
+  get: (token: string, bookId: number) =>
+    apiCallAuth<ReadingBookmark | null>(
+      `${apiConfig.endpoints.readingBookmarks}/book/${bookId}`,
+      token
+    ),
+  set: (token: string, bookId: number, chapterId: number) =>
+    apiCallAuth<ReadingBookmark>(
+      `${apiConfig.endpoints.readingBookmarks}/book/${bookId}`,
+      token,
+      {
+        method: "PUT",
+        body: JSON.stringify({ chapterId }),
+      }
+    ),
+};
+
+export const reviewsApi = {
+  getByBook: (bookId: number) =>
+    apiCall<ReviewDto[]>(`${apiConfig.endpoints.reviews}/book/${bookId}`),
+  create: (token: string, bookId: number, rating: number) =>
+    apiCallAuth<ReviewDto>(apiConfig.endpoints.reviews, token, {
+      method: "POST",
+      body: JSON.stringify({ bookId, rating }),
+    }),
+  update: (token: string, reviewId: number, rating: number) =>
+    apiCallAuth<ReviewDto>(`${apiConfig.endpoints.reviews}/${reviewId}`, token, {
+      method: "PUT",
+      body: JSON.stringify({ rating }),
     }),
 };

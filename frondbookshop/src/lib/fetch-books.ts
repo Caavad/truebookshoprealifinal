@@ -1,12 +1,15 @@
 import { Book } from "@/helpers/interfaces/books";
 import { getApiCandidates } from "@/lib/api-config";
 
-type FetchBooksResult = {
+export type FetchBooksResult = {
   books: Book[];
   error?: string;
 };
 
-export async function fetchBooks(): Promise<FetchBooksResult> {
+const API_UNAVAILABLE_MESSAGE =
+  "API is not running. Start it with: npm run dev:api (or npm run dev from the project root).";
+
+async function tryFetchBooksOnce(): Promise<Book[] | null> {
   for (const baseUrl of getApiCandidates()) {
     try {
       const response = await fetch(`${baseUrl}/api/books`, {
@@ -14,17 +17,43 @@ export async function fetchBooks(): Promise<FetchBooksResult> {
       });
 
       if (response.ok) {
-        const books: Book[] = await response.json();
-        return { books };
+        return (await response.json()) as Book[];
       }
     } catch {
       // Try the next configured API URL.
     }
   }
 
+  return null;
+}
+
+/** Fetches books with short retries so pages survive API cold-start. */
+export async function fetchBooks(retries = 4, delayMs = 800): Promise<FetchBooksResult> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const books = await tryFetchBooksOnce();
+    if (books) {
+      return { books };
+    }
+
+    if (attempt < retries) {
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+
   return {
     books: [],
-    error:
-      "Cannot connect to the API. Start the backend from the project root: npm run dev:api",
+    error: API_UNAVAILABLE_MESSAGE,
   };
+}
+
+export function filterByCategory(books: Book[], category: string): Book[] {
+  const needle = category.trim().toLowerCase();
+  return books.filter((book) => book.category.toLowerCase() === needle);
+}
+
+export function filterBySubCategory(books: Book[], subCategory: string): Book[] {
+  const needle = subCategory.trim().toLowerCase().replace(/-/g, " ");
+  return books.filter(
+    (book) => (book.subCategory || "").toLowerCase().replace(/-/g, " ") === needle
+  );
 }

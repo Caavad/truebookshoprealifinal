@@ -7,7 +7,8 @@ export default async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
   const isAuthPage = authPages.some((page) => pathname.startsWith(page));
   const isAdminPage = pathname.startsWith("/admin");
-  const isAuthorPage = pathname.startsWith("/author");
+  // /author is the protected editor dashboard. /authors is a public catalogue page.
+  const isAuthorPage = pathname === "/author" || pathname.startsWith("/author/");
 
   const session = await getToken({
     req,

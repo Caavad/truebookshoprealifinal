@@ -28,6 +28,12 @@ public class CreateUserDtoValidator : AbstractValidator<DTOs.CreateUserDto>
             .NotEmpty().WithMessage("Password is required")
             .MinimumLength(6).WithMessage("Password must be at least 6 characters long")
             .MaximumLength(100).WithMessage("Password cannot exceed 100 characters");
+
+        RuleFor(x => x.Role)
+            .Must(role => string.IsNullOrWhiteSpace(role)
+                || role.Equals("Customer", StringComparison.OrdinalIgnoreCase)
+                || role.Equals("Author", StringComparison.OrdinalIgnoreCase))
+            .WithMessage("Role must be Customer or Author");
     }
 }
 

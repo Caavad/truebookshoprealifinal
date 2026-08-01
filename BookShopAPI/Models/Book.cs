@@ -40,13 +40,17 @@ public class Book
     public decimal Rating { get; set; }
     
     public int StockCount { get; set; }
+
+    public int? AuthorId { get; set; }
     
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     
     public virtual ICollection<BookFormat> Formats { get; set; } = new List<BookFormat>();
+    public virtual ICollection<Chapter> Chapters { get; set; } = new List<Chapter>();
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+    public virtual User? AuthorUser { get; set; }
 }
 

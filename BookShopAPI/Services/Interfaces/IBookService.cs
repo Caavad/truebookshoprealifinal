@@ -5,13 +5,15 @@ namespace BookShopAPI.Services.Interfaces;
 public interface IBookService
 {
     Task<IEnumerable<BookDto>> GetAllBooksAsync();
+    Task<IEnumerable<BookDto>> GetBooksByAuthorIdAsync(int authorId);
     Task<BookDto?> GetBookByIdAsync(int id);
     Task<BookReadDto?> GetBookReadAsync(int id);
     Task<IEnumerable<BookDto>> GetBooksByCategoryAsync(string category);
     Task<IEnumerable<BookDto>> SearchBooksAsync(string searchTerm);
-    Task<BookDto> CreateBookAsync(CreateBookDto createBookDto);
+    Task<BookDto> CreateBookAsync(CreateBookDto createBookDto, int? authorId = null);
     Task<BookDto?> UpdateBookAsync(int id, UpdateBookDto updateBookDto);
     Task<bool> DeleteBookAsync(int id);
+    Task<bool> IsBookOwnedByAuthorAsync(int bookId, int authorId);
     Task<IEnumerable<string>> GetCategoriesAsync();
     
     // BookFormat methods

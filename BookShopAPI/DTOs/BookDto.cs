@@ -13,9 +13,11 @@ public class BookDto
     public string Content { get; set; } = string.Empty;
     public decimal Rating { get; set; }
     public int StockCount { get; set; }
+    public int? AuthorId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public List<BookFormatDto> Formats { get; set; } = new();
+    public List<ChapterDto> Chapters { get; set; } = new();
 }
 
 public class BookReadDto
@@ -24,6 +26,7 @@ public class BookReadDto
     public string Title { get; set; } = string.Empty;
     public string Author { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
+    public List<ChapterDto> Chapters { get; set; } = new();
 }
 
 public class BookFormatDto

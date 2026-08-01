@@ -1,0 +1,197 @@
+2026-07-23 16:54:31.554 +04:00 [INF] Database BookShopDB is ready
+2026-07-23 16:54:31.829 +04:00 [INF] Database schema already exists
+2026-07-23 16:54:33.893 +04:00 [INF] Executed DbCommand (14ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Users] AS [u]
+        WHERE [u].[Email] = N'admin@bookshop.com') THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+2026-07-23 16:54:34.017 +04:00 [INF] Admin user already exists
+2026-07-23 16:54:34.162 +04:00 [INF] Applied seed update: 004_SeedBookContent.sql
+2026-07-23 16:54:34.175 +04:00 [INF] Applied fix: 005_FixNullBookFields.sql
+2026-07-23 16:54:34.228 +04:00 [INF] Applied content-to-chapter update: 008_MigrateBookContentToFirstChapter.sql
+2026-07-23 16:54:34.516 +04:00 [INF] Starting BookShop API...
+2026-07-23 16:54:34.579 +04:00 [INF] User profile is available. Using 'C:\Users\Javad\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-07-23 16:54:34.764 +04:00 [INF] Now listening on: http://localhost:7000
+2026-07-23 16:54:34.781 +04:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 16:54:34.793 +04:00 [INF] Hosting environment: Development
+2026-07-23 16:54:34.808 +04:00 [INF] Content root path: C:\Users\Javad\Downloads\2truebookshoprealifinal-main (2)\truebookshoprealifinal-main\truebookshoprealifinal-main\BookShopAPI
+2026-07-23 16:54:57.417 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/api/books - null null
+2026-07-23 16:54:57.627 +04:00 [WRN] Failed to determine the https port for redirect.
+2026-07-23 16:54:57.762 +04:00 [INF] Executing endpoint 'BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI)'
+2026-07-23 16:54:57.848 +04:00 [INF] Route matched with {action = "GetBooks", controller = "Books"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[BookShopAPI.DTOs.BookDto]]] GetBooks() on controller BookShopAPI.Controllers.BooksController (BookShopAPI).
+2026-07-23 16:54:58.733 +04:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2026-07-23 16:54:58.903 +04:00 [INF] Executed DbCommand (9ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Author], [b].[AuthorId], [b].[Category], [b].[Content], [b].[CoverUrl], [b].[CreatedAt], [b].[Description], [b].[Path], [b].[Rating], [b].[StockCount], [b].[SubCategory], [b].[Title], [b].[UpdatedAt], [b0].[Id], [b0].[BookId], [b0].[CoverUrl], [b0].[CreatedAt], [b0].[FileSizeMB], [b0].[Format], [b0].[Language], [b0].[Pages], [b0].[Price], [b0].[StockCount], [b0].[UpdatedAt], [c].[Id], [c].[BookId], [c].[ChapterNumber], [c].[Content], [c].[CreatedAt], [c].[Title], [c].[UpdatedAt]
+FROM [Books] AS [b]
+LEFT JOIN [BookFormats] AS [b0] ON [b].[Id] = [b0].[BookId]
+LEFT JOIN [Chapters] AS [c] ON [b].[Id] = [c].[BookId]
+ORDER BY [b].[Id], [b0].[Id]
+2026-07-23 16:54:59.623 +04:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BookShopAPI.DTOs.BookDto, BookShopAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-07-23 16:54:59.831 +04:00 [INF] Executed action BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI) in 1921.1436ms
+2026-07-23 16:54:59.901 +04:00 [INF] Executed endpoint 'BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI)'
+2026-07-23 16:54:59.942 +04:00 [INF] HTTP GET /api/books responded 200 in 2171.8278 ms
+2026-07-23 16:55:00.084 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/api/books - 200 null application/json; charset=utf-8 2672.9068ms
+2026-07-23 16:55:10.676 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/api/books - null null
+2026-07-23 16:55:10.722 +04:00 [INF] Executing endpoint 'BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI)'
+2026-07-23 16:55:10.741 +04:00 [INF] Route matched with {action = "GetBooks", controller = "Books"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[BookShopAPI.DTOs.BookDto]]] GetBooks() on controller BookShopAPI.Controllers.BooksController (BookShopAPI).
+2026-07-23 16:55:10.992 +04:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Author], [b].[AuthorId], [b].[Category], [b].[Content], [b].[CoverUrl], [b].[CreatedAt], [b].[Description], [b].[Path], [b].[Rating], [b].[StockCount], [b].[SubCategory], [b].[Title], [b].[UpdatedAt], [b0].[Id], [b0].[BookId], [b0].[CoverUrl], [b0].[CreatedAt], [b0].[FileSizeMB], [b0].[Format], [b0].[Language], [b0].[Pages], [b0].[Price], [b0].[StockCount], [b0].[UpdatedAt], [c].[Id], [c].[BookId], [c].[ChapterNumber], [c].[Content], [c].[CreatedAt], [c].[Title], [c].[UpdatedAt]
+FROM [Books] AS [b]
+LEFT JOIN [BookFormats] AS [b0] ON [b].[Id] = [b0].[BookId]
+LEFT JOIN [Chapters] AS [c] ON [b].[Id] = [c].[BookId]
+ORDER BY [b].[Id], [b0].[Id]
+2026-07-23 16:55:11.032 +04:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BookShopAPI.DTOs.BookDto, BookShopAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-07-23 16:55:11.051 +04:00 [INF] Executed action BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI) in 289.6744ms
+2026-07-23 16:55:11.081 +04:00 [INF] Executed endpoint 'BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI)'
+2026-07-23 16:55:11.096 +04:00 [INF] HTTP GET /api/books responded 200 in 374.2788 ms
+2026-07-23 16:55:11.123 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/api/books - 200 null application/json; charset=utf-8 447.3792ms
+2026-07-23 16:55:21.916 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/api/books - null null
+2026-07-23 16:55:21.932 +04:00 [INF] Executing endpoint 'BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI)'
+2026-07-23 16:55:21.936 +04:00 [INF] Route matched with {action = "GetBooks", controller = "Books"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[BookShopAPI.DTOs.BookDto]]] GetBooks() on controller BookShopAPI.Controllers.BooksController (BookShopAPI).
+2026-07-23 16:55:21.949 +04:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Author], [b].[AuthorId], [b].[Category], [b].[Content], [b].[CoverUrl], [b].[CreatedAt], [b].[Description], [b].[Path], [b].[Rating], [b].[StockCount], [b].[SubCategory], [b].[Title], [b].[UpdatedAt], [b0].[Id], [b0].[BookId], [b0].[CoverUrl], [b0].[CreatedAt], [b0].[FileSizeMB], [b0].[Format], [b0].[Language], [b0].[Pages], [b0].[Price], [b0].[StockCount], [b0].[UpdatedAt], [c].[Id], [c].[BookId], [c].[ChapterNumber], [c].[Content], [c].[CreatedAt], [c].[Title], [c].[UpdatedAt]
+FROM [Books] AS [b]
+LEFT JOIN [BookFormats] AS [b0] ON [b].[Id] = [b0].[BookId]
+LEFT JOIN [Chapters] AS [c] ON [b].[Id] = [c].[BookId]
+ORDER BY [b].[Id], [b0].[Id]
+2026-07-23 16:55:21.965 +04:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BookShopAPI.DTOs.BookDto, BookShopAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-07-23 16:55:21.974 +04:00 [INF] Executed action BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI) in 32.0934ms
+2026-07-23 16:55:21.978 +04:00 [INF] Executed endpoint 'BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI)'
+2026-07-23 16:55:21.983 +04:00 [INF] HTTP GET /api/books responded 200 in 51.2400 ms
+2026-07-23 16:55:21.991 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/api/books - 200 null application/json; charset=utf-8 74.0833ms
+2026-07-23 16:55:26.015 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/api/books - null null
+2026-07-23 16:55:26.021 +04:00 [INF] Executing endpoint 'BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI)'
+2026-07-23 16:55:26.026 +04:00 [INF] Route matched with {action = "GetBooks", controller = "Books"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[BookShopAPI.DTOs.BookDto]]] GetBooks() on controller BookShopAPI.Controllers.BooksController (BookShopAPI).
+2026-07-23 16:55:26.034 +04:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Author], [b].[AuthorId], [b].[Category], [b].[Content], [b].[CoverUrl], [b].[CreatedAt], [b].[Description], [b].[Path], [b].[Rating], [b].[StockCount], [b].[SubCategory], [b].[Title], [b].[UpdatedAt], [b0].[Id], [b0].[BookId], [b0].[CoverUrl], [b0].[CreatedAt], [b0].[FileSizeMB], [b0].[Format], [b0].[Language], [b0].[Pages], [b0].[Price], [b0].[StockCount], [b0].[UpdatedAt], [c].[Id], [c].[BookId], [c].[ChapterNumber], [c].[Content], [c].[CreatedAt], [c].[Title], [c].[UpdatedAt]
+FROM [Books] AS [b]
+LEFT JOIN [BookFormats] AS [b0] ON [b].[Id] = [b0].[BookId]
+LEFT JOIN [Chapters] AS [c] ON [b].[Id] = [c].[BookId]
+ORDER BY [b].[Id], [b0].[Id]
+2026-07-23 16:55:26.044 +04:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BookShopAPI.DTOs.BookDto, BookShopAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-07-23 16:55:26.048 +04:00 [INF] Executed action BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI) in 17.1225ms
+2026-07-23 16:55:26.053 +04:00 [INF] Executed endpoint 'BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI)'
+2026-07-23 16:55:26.056 +04:00 [INF] HTTP GET /api/books responded 200 in 34.9770 ms
+2026-07-23 16:55:26.062 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/api/books - 200 null application/json; charset=utf-8 47.5438ms
+2026-07-23 16:55:33.140 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/api/books - null null
+2026-07-23 16:55:33.181 +04:00 [INF] Executing endpoint 'BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI)'
+2026-07-23 16:55:33.200 +04:00 [INF] Route matched with {action = "GetBooks", controller = "Books"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[BookShopAPI.DTOs.BookDto]]] GetBooks() on controller BookShopAPI.Controllers.BooksController (BookShopAPI).
+2026-07-23 16:55:33.225 +04:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Author], [b].[AuthorId], [b].[Category], [b].[Content], [b].[CoverUrl], [b].[CreatedAt], [b].[Description], [b].[Path], [b].[Rating], [b].[StockCount], [b].[SubCategory], [b].[Title], [b].[UpdatedAt], [b0].[Id], [b0].[BookId], [b0].[CoverUrl], [b0].[CreatedAt], [b0].[FileSizeMB], [b0].[Format], [b0].[Language], [b0].[Pages], [b0].[Price], [b0].[StockCount], [b0].[UpdatedAt], [c].[Id], [c].[BookId], [c].[ChapterNumber], [c].[Content], [c].[CreatedAt], [c].[Title], [c].[UpdatedAt]
+FROM [Books] AS [b]
+LEFT JOIN [BookFormats] AS [b0] ON [b].[Id] = [b0].[BookId]
+LEFT JOIN [Chapters] AS [c] ON [b].[Id] = [c].[BookId]
+ORDER BY [b].[Id], [b0].[Id]
+2026-07-23 16:55:33.234 +04:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BookShopAPI.DTOs.BookDto, BookShopAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-07-23 16:55:33.239 +04:00 [INF] Executed action BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI) in 18.3005ms
+2026-07-23 16:55:33.243 +04:00 [INF] Executed endpoint 'BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI)'
+2026-07-23 16:55:33.247 +04:00 [INF] HTTP GET /api/books responded 200 in 65.5655 ms
+2026-07-23 16:55:33.254 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/api/books - 200 null application/json; charset=utf-8 113.2684ms
+2026-07-23 16:55:39.185 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/api/books - null null
+2026-07-23 16:55:39.196 +04:00 [INF] Executing endpoint 'BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI)'
+2026-07-23 16:55:39.199 +04:00 [INF] Route matched with {action = "GetBooks", controller = "Books"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[BookShopAPI.DTOs.BookDto]]] GetBooks() on controller BookShopAPI.Controllers.BooksController (BookShopAPI).
+2026-07-23 16:55:39.210 +04:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Author], [b].[AuthorId], [b].[Category], [b].[Content], [b].[CoverUrl], [b].[CreatedAt], [b].[Description], [b].[Path], [b].[Rating], [b].[StockCount], [b].[SubCategory], [b].[Title], [b].[UpdatedAt], [b0].[Id], [b0].[BookId], [b0].[CoverUrl], [b0].[CreatedAt], [b0].[FileSizeMB], [b0].[Format], [b0].[Language], [b0].[Pages], [b0].[Price], [b0].[StockCount], [b0].[UpdatedAt], [c].[Id], [c].[BookId], [c].[ChapterNumber], [c].[Content], [c].[CreatedAt], [c].[Title], [c].[UpdatedAt]
+FROM [Books] AS [b]
+LEFT JOIN [BookFormats] AS [b0] ON [b].[Id] = [b0].[BookId]
+LEFT JOIN [Chapters] AS [c] ON [b].[Id] = [c].[BookId]
+ORDER BY [b].[Id], [b0].[Id]
+2026-07-23 16:55:39.221 +04:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BookShopAPI.DTOs.BookDto, BookShopAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-07-23 16:55:39.228 +04:00 [INF] Executed action BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI) in 21.9061ms
+2026-07-23 16:55:39.234 +04:00 [INF] Executed endpoint 'BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI)'
+2026-07-23 16:55:39.238 +04:00 [INF] HTTP GET /api/books responded 200 in 42.0355 ms
+2026-07-23 16:55:39.244 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/api/books - 200 null application/json; charset=utf-8 59.0113ms
+2026-07-23 16:55:42.089 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/api/books - null null
+2026-07-23 16:55:42.097 +04:00 [INF] Executing endpoint 'BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI)'
+2026-07-23 16:55:42.100 +04:00 [INF] Route matched with {action = "GetBooks", controller = "Books"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[System.Collections.Generic.IEnumerable`1[BookShopAPI.DTOs.BookDto]]] GetBooks() on controller BookShopAPI.Controllers.BooksController (BookShopAPI).
+2026-07-23 16:55:42.118 +04:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Author], [b].[AuthorId], [b].[Category], [b].[Content], [b].[CoverUrl], [b].[CreatedAt], [b].[Description], [b].[Path], [b].[Rating], [b].[StockCount], [b].[SubCategory], [b].[Title], [b].[UpdatedAt], [b0].[Id], [b0].[BookId], [b0].[CoverUrl], [b0].[CreatedAt], [b0].[FileSizeMB], [b0].[Format], [b0].[Language], [b0].[Pages], [b0].[Price], [b0].[StockCount], [b0].[UpdatedAt], [c].[Id], [c].[BookId], [c].[ChapterNumber], [c].[Content], [c].[CreatedAt], [c].[Title], [c].[UpdatedAt]
+FROM [Books] AS [b]
+LEFT JOIN [BookFormats] AS [b0] ON [b].[Id] = [b0].[BookId]
+LEFT JOIN [Chapters] AS [c] ON [b].[Id] = [c].[BookId]
+ORDER BY [b].[Id], [b0].[Id]
+2026-07-23 16:55:42.128 +04:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[BookShopAPI.DTOs.BookDto, BookShopAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-07-23 16:55:42.133 +04:00 [INF] Executed action BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI) in 29.9778ms
+2026-07-23 16:55:42.139 +04:00 [INF] Executed endpoint 'BookShopAPI.Controllers.BooksController.GetBooks (BookShopAPI)'
+2026-07-23 16:55:42.143 +04:00 [INF] HTTP GET /api/books responded 200 in 45.7082 ms
+2026-07-23 16:55:42.149 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/api/books - 200 null application/json; charset=utf-8 60.0212ms
+2026-07-23 16:55:45.888 +04:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:7000/api/books/1/read - null null
+2026-07-23 16:55:45.889 +04:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:7000/api/books/1/read - null null
+2026-07-23 16:55:45.901 +04:00 [INF] CORS policy execution successful.
+2026-07-23 16:55:45.905 +04:00 [INF] CORS policy execution successful.
+2026-07-23 16:55:45.908 +04:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:7000/api/books/1/read - 204 null null 20.4186ms
+2026-07-23 16:55:45.909 +04:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:7000/api/books/1/read - 204 null null 20.5701ms
+2026-07-23 16:55:45.928 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/api/books/1/read - application/json null
+2026-07-23 16:55:45.942 +04:00 [INF] CORS policy execution successful.
+2026-07-23 16:55:45.947 +04:00 [INF] Executing endpoint 'BookShopAPI.Controllers.BooksController.GetBookRead (BookShopAPI)'
+2026-07-23 16:55:45.970 +04:00 [INF] Route matched with {action = "GetBookRead", controller = "Books"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[BookShopAPI.DTOs.BookReadDto]] GetBookRead(Int32) on controller BookShopAPI.Controllers.BooksController (BookShopAPI).
+2026-07-23 16:55:46.111 +04:00 [INF] Executed DbCommand (11ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [b0].[Id], [b0].[Author], [b0].[AuthorId], [b0].[Category], [b0].[Content], [b0].[CoverUrl], [b0].[CreatedAt], [b0].[Description], [b0].[Path], [b0].[Rating], [b0].[StockCount], [b0].[SubCategory], [b0].[Title], [b0].[UpdatedAt], [c].[Id], [c].[BookId], [c].[ChapterNumber], [c].[Content], [c].[CreatedAt], [c].[Title], [c].[UpdatedAt]
+FROM (
+    SELECT TOP(1) [b].[Id], [b].[Author], [b].[AuthorId], [b].[Category], [b].[Content], [b].[CoverUrl], [b].[CreatedAt], [b].[Description], [b].[Path], [b].[Rating], [b].[StockCount], [b].[SubCategory], [b].[Title], [b].[UpdatedAt]
+    FROM [Books] AS [b]
+    WHERE [b].[Id] = @__id_0
+) AS [b0]
+LEFT JOIN [Chapters] AS [c] ON [b0].[Id] = [c].[BookId]
+ORDER BY [b0].[Id]
+2026-07-23 16:55:46.135 +04:00 [INF] Executing OkObjectResult, writing value of type 'BookShopAPI.DTOs.BookReadDto'.
+2026-07-23 16:55:46.148 +04:00 [INF] Executed action BookShopAPI.Controllers.BooksController.GetBookRead (BookShopAPI) in 170.4076ms
+2026-07-23 16:55:46.149 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/api/books/1/read - application/json null
+2026-07-23 16:55:46.156 +04:00 [INF] Executed endpoint 'BookShopAPI.Controllers.BooksController.GetBookRead (BookShopAPI)'
+2026-07-23 16:55:46.161 +04:00 [INF] CORS policy execution successful.
+2026-07-23 16:55:46.165 +04:00 [INF] HTTP GET /api/books/1/read responded 200 in 218.0978 ms
+2026-07-23 16:55:46.167 +04:00 [INF] Executing endpoint 'BookShopAPI.Controllers.BooksController.GetBookRead (BookShopAPI)'
+2026-07-23 16:55:46.175 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/api/books/1/read - 200 null application/json; charset=utf-8 246.5814ms
+2026-07-23 16:55:46.176 +04:00 [INF] Route matched with {action = "GetBookRead", controller = "Books"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[BookShopAPI.DTOs.BookReadDto]] GetBookRead(Int32) on controller BookShopAPI.Controllers.BooksController (BookShopAPI).
+2026-07-23 16:55:46.199 +04:00 [INF] Executed DbCommand (1ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [b0].[Id], [b0].[Author], [b0].[AuthorId], [b0].[Category], [b0].[Content], [b0].[CoverUrl], [b0].[CreatedAt], [b0].[Description], [b0].[Path], [b0].[Rating], [b0].[StockCount], [b0].[SubCategory], [b0].[Title], [b0].[UpdatedAt], [c].[Id], [c].[BookId], [c].[ChapterNumber], [c].[Content], [c].[CreatedAt], [c].[Title], [c].[UpdatedAt]
+FROM (
+    SELECT TOP(1) [b].[Id], [b].[Author], [b].[AuthorId], [b].[Category], [b].[Content], [b].[CoverUrl], [b].[CreatedAt], [b].[Description], [b].[Path], [b].[Rating], [b].[StockCount], [b].[SubCategory], [b].[Title], [b].[UpdatedAt]
+    FROM [Books] AS [b]
+    WHERE [b].[Id] = @__id_0
+) AS [b0]
+LEFT JOIN [Chapters] AS [c] ON [b0].[Id] = [c].[BookId]
+ORDER BY [b0].[Id]
+2026-07-23 16:55:46.210 +04:00 [INF] Executing OkObjectResult, writing value of type 'BookShopAPI.DTOs.BookReadDto'.
+2026-07-23 16:55:46.215 +04:00 [INF] Executed action BookShopAPI.Controllers.BooksController.GetBookRead (BookShopAPI) in 22.3706ms
+2026-07-23 16:55:46.219 +04:00 [INF] Executed endpoint 'BookShopAPI.Controllers.BooksController.GetBookRead (BookShopAPI)'
+2026-07-23 16:55:46.223 +04:00 [INF] HTTP GET /api/books/1/read responded 200 in 56.5221 ms
+2026-07-23 16:55:46.230 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/api/books/1/read - 200 null application/json; charset=utf-8 81.1017ms
+2026-07-23 16:55:48.793 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/api/books/1/read - application/json null
+2026-07-23 16:55:48.824 +04:00 [INF] Executing endpoint 'BookShopAPI.Controllers.BooksController.GetBookRead (BookShopAPI)'
+2026-07-23 16:55:48.841 +04:00 [INF] Route matched with {action = "GetBookRead", controller = "Books"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[BookShopAPI.DTOs.BookReadDto]] GetBookRead(Int32) on controller BookShopAPI.Controllers.BooksController (BookShopAPI).
+2026-07-23 16:55:48.904 +04:00 [INF] Request starting HTTP/1.1 GET http://localhost:7000/api/books/1/read - application/json null
+2026-07-23 16:55:48.904 +04:00 [INF] Executed DbCommand (15ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [b0].[Id], [b0].[Author], [b0].[AuthorId], [b0].[Category], [b0].[Content], [b0].[CoverUrl], [b0].[CreatedAt], [b0].[Description], [b0].[Path], [b0].[Rating], [b0].[StockCount], [b0].[SubCategory], [b0].[Title], [b0].[UpdatedAt], [c].[Id], [c].[BookId], [c].[ChapterNumber], [c].[Content], [c].[CreatedAt], [c].[Title], [c].[UpdatedAt]
+FROM (
+    SELECT TOP(1) [b].[Id], [b].[Author], [b].[AuthorId], [b].[Category], [b].[Content], [b].[CoverUrl], [b].[CreatedAt], [b].[Description], [b].[Path], [b].[Rating], [b].[StockCount], [b].[SubCategory], [b].[Title], [b].[UpdatedAt]
+    FROM [Books] AS [b]
+    WHERE [b].[Id] = @__id_0
+) AS [b0]
+LEFT JOIN [Chapters] AS [c] ON [b0].[Id] = [c].[BookId]
+ORDER BY [b0].[Id]
+2026-07-23 16:55:48.943 +04:00 [INF] Executing endpoint 'BookShopAPI.Controllers.BooksController.GetBookRead (BookShopAPI)'
+2026-07-23 16:55:48.982 +04:00 [INF] Route matched with {action = "GetBookRead", controller = "Books"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult`1[BookShopAPI.DTOs.BookReadDto]] GetBookRead(Int32) on controller BookShopAPI.Controllers.BooksController (BookShopAPI).
+2026-07-23 16:55:48.979 +04:00 [INF] Executing OkObjectResult, writing value of type 'BookShopAPI.DTOs.BookReadDto'.
+2026-07-23 16:55:49.018 +04:00 [INF] Executed action BookShopAPI.Controllers.BooksController.GetBookRead (BookShopAPI) in 136.9763ms
+2026-07-23 16:55:49.022 +04:00 [INF] Executed DbCommand (7ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [b0].[Id], [b0].[Author], [b0].[AuthorId], [b0].[Category], [b0].[Content], [b0].[CoverUrl], [b0].[CreatedAt], [b0].[Description], [b0].[Path], [b0].[Rating], [b0].[StockCount], [b0].[SubCategory], [b0].[Title], [b0].[UpdatedAt], [c].[Id], [c].[BookId], [c].[ChapterNumber], [c].[Content], [c].[CreatedAt], [c].[Title], [c].[UpdatedAt]
+FROM (
+    SELECT TOP(1) [b].[Id], [b].[Author], [b].[AuthorId], [b].[Category], [b].[Content], [b].[CoverUrl], [b].[CreatedAt], [b].[Description], [b].[Path], [b].[Rating], [b].[StockCount], [b].[SubCategory], [b].[Title], [b].[UpdatedAt]
+    FROM [Books] AS [b]
+    WHERE [b].[Id] = @__id_0
+) AS [b0]
+LEFT JOIN [Chapters] AS [c] ON [b0].[Id] = [c].[BookId]
+ORDER BY [b0].[Id]
+2026-07-23 16:55:49.051 +04:00 [INF] Executed endpoint 'BookShopAPI.Controllers.BooksController.GetBookRead (BookShopAPI)'
+2026-07-23 16:55:49.064 +04:00 [INF] Executing OkObjectResult, writing value of type 'BookShopAPI.DTOs.BookReadDto'.
+2026-07-23 16:55:49.087 +04:00 [INF] HTTP GET /api/books/1/read responded 200 in 262.7320 ms
+2026-07-23 16:55:49.094 +04:00 [INF] Executed action BookShopAPI.Controllers.BooksController.GetBookRead (BookShopAPI) in 83.7939ms
+2026-07-23 16:55:49.130 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/api/books/1/read - 200 null application/json; charset=utf-8 336.4242ms
+2026-07-23 16:55:49.135 +04:00 [INF] Executed endpoint 'BookShopAPI.Controllers.BooksController.GetBookRead (BookShopAPI)'
+2026-07-23 16:55:49.197 +04:00 [INF] HTTP GET /api/books/1/read responded 200 in 254.0536 ms
+2026-07-23 16:55:49.222 +04:00 [INF] Request finished HTTP/1.1 GET http://localhost:7000/api/books/1/read - 200 null application/json; charset=utf-8 318.0143ms
+2026-07-23 16:56:20.568 +04:00 [INF] Application is shutting down...

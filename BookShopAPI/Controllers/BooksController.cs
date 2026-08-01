@@ -2,6 +2,7 @@ using BookShopAPI.DTOs;
 using BookShopAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BookShopAPI.Controllers;
 
@@ -18,7 +19,6 @@ public class BooksController : ControllerBase
         _logger = logger;
     }
 
-
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BookDto>>> GetBooks()
     {
@@ -34,7 +34,26 @@ public class BooksController : ControllerBase
         }
     }
 
- 
+    [HttpGet("my-books")]
+    [Authorize(Roles = "Admin,Author")]
+    public async Task<ActionResult<IEnumerable<BookDto>>> GetMyBooks()
+    {
+        try
+        {
+            // Administrators manage chapters for any book; authors only see books they own.
+            if (GetCurrentUserRole() == "Admin")
+                return Ok(await _bookService.GetAllBooksAsync());
+
+            var books = await _bookService.GetBooksByAuthorIdAsync(GetCurrentUserId());
+            return Ok(books);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving author books");
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
     [HttpGet("{id}/read")]
     public async Task<ActionResult<BookReadDto>> GetBookRead(int id)
     {
@@ -86,7 +105,6 @@ public class BooksController : ControllerBase
         }
     }
 
-
     [HttpGet("search")]
     public async Task<ActionResult<IEnumerable<BookDto>>> SearchBooks([FromQuery] string q)
     {
@@ -105,7 +123,6 @@ public class BooksController : ControllerBase
         }
     }
 
-   
     [HttpGet("categories")]
     public async Task<ActionResult<IEnumerable<string>>> GetCategories()
     {
@@ -121,13 +138,17 @@ public class BooksController : ControllerBase
         }
     }
 
-     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    [Authorize(Roles = "Admin,Author")]
     public async Task<ActionResult<BookDto>> CreateBook(CreateBookDto createBookDto)
     {
         try
         {
-            var book = await _bookService.CreateBookAsync(createBookDto);
+            int? authorId = null;
+            if (GetCurrentUserRole() == "Author")
+                authorId = GetCurrentUserId();
+
+            var book = await _bookService.CreateBookAsync(createBookDto, authorId);
             return CreatedAtAction(nameof(GetBook), new { id = book.Id }, book);
         }
         catch (Exception ex)
@@ -137,13 +158,15 @@ public class BooksController : ControllerBase
         }
     }
 
-   
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Author")]
     public async Task<ActionResult<BookDto>> UpdateBook(int id, UpdateBookDto updateBookDto)
     {
         try
         {
+            if (!await CanManageBookAsync(id))
+                return Forbid();
+
             var book = await _bookService.UpdateBookAsync(id, updateBookDto);
             if (book == null)
                 return NotFound();
@@ -157,13 +180,15 @@ public class BooksController : ControllerBase
         }
     }
 
- 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Author")]
     public async Task<IActionResult> DeleteBook(int id)
     {
         try
         {
+            if (!await CanManageBookAsync(id))
+                return Forbid();
+
             var result = await _bookService.DeleteBookAsync(id);
             if (!result)
                 return NotFound();
@@ -176,5 +201,27 @@ public class BooksController : ControllerBase
             return StatusCode(500, "Internal server error");
         }
     }
-}
 
+    private async Task<bool> CanManageBookAsync(int bookId)
+    {
+        var role = GetCurrentUserRole();
+        if (role == "Admin") return true;
+        if (role == "Author")
+            return await _bookService.IsBookOwnedByAuthorAsync(bookId, GetCurrentUserId());
+        return false;
+    }
+
+    private int GetCurrentUserId()
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (int.TryParse(userIdClaim, out var userId))
+            return userId;
+
+        throw new UnauthorizedAccessException("User ID not found in token");
+    }
+
+    private string GetCurrentUserRole()
+    {
+        return User.FindFirst(ClaimTypes.Role)?.Value ?? "Customer";
+    }
+}

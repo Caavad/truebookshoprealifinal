@@ -43,6 +43,7 @@ public class UserService : IUserService
     {
         var user = _mapper.Map<User>(createUserDto);
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(createUserDto.Password);
+        user.Role = ParseRegistrationRole(createUserDto.Role);
         user.CreatedAt = DateTime.UtcNow;
         user.UpdatedAt = DateTime.UtcNow;
 
@@ -50,6 +51,14 @@ public class UserService : IUserService
         await _context.SaveChangesAsync();
 
         return _mapper.Map<UserDto>(user);
+    }
+
+    private static UserRole ParseRegistrationRole(string role)
+    {
+        if (Enum.TryParse<UserRole>(role, true, out var parsed) && parsed == UserRole.Author)
+            return UserRole.Author;
+
+        return UserRole.Customer;
     }
 
     public async Task<UserDto?> UpdateUserAsync(int id, UpdateUserDto updateUserDto)

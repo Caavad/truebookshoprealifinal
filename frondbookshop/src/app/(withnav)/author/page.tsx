@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +40,7 @@ const emptyChapterForm = {
 export default function AuthorPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [books, setBooks] = useState<Book[]>([]);
   const [form, setForm] = useState(emptyBookForm);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -72,6 +73,14 @@ export default function AuthorPage() {
     }
     loadBooks();
   }, [status, session, isAuthor, router]);
+
+  useEffect(() => {
+    const requestedBookId = Number(searchParams.get("bookId"));
+    if (!requestedBookId || selectedBookId === requestedBookId) return;
+
+    const book = books.find((item) => item.id === requestedBookId);
+    if (book) startEdit(book);
+  }, [books, searchParams, selectedBookId]);
 
   useEffect(() => {
     if (authorMode === "self" && selfAuthorName) {

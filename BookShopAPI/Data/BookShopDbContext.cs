@@ -16,6 +16,8 @@ namespace BookShopAPI.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<BookFormat> BookFormats { get; set; }
+        public DbSet<Chapter> Chapters { get; set; }
+        public DbSet<ReadingBookmark> ReadingBookmarks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +33,41 @@ namespace BookShopAPI.Data
                 
                 entity.Property(e => e.Rating)
                     .HasPrecision(3, 2);
+
+                entity.HasOne(b => b.AuthorUser)
+                    .WithMany(u => u.AuthoredBooks)
+                    .HasForeignKey(b => b.AuthorId)
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<Chapter>(entity =>
+            {
+                entity.HasOne(c => c.Book)
+                    .WithMany(b => b.Chapters)
+                    .HasForeignKey(c => c.BookId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => new { e.BookId, e.ChapterNumber });
+            });
+
+            modelBuilder.Entity<ReadingBookmark>(entity =>
+            {
+                entity.HasIndex(e => new { e.UserId, e.BookId }).IsUnique();
+
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Book)
+                    .WithMany()
+                    .HasForeignKey(e => e.BookId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Chapter)
+                    .WithMany()
+                    .HasForeignKey(e => e.ChapterId)
+                    .OnDelete(DeleteBehavior.NoAction);
             });
 
             // BookFormat configuration

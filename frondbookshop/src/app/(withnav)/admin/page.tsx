@@ -415,6 +415,9 @@ export default function AdminPage() {
                       <Button size="sm" variant="outline" asChild>
                         <Link href={`/read/${book.id}`}>Read</Link>
                       </Button>
+                      <Button size="sm" variant="outline" asChild>
+                        <Link href={`/author?bookId=${book.id}`}>Chapters</Link>
+                      </Button>
                       <Button size="sm" variant="outline" onClick={() => startEdit(book)}>
                         Edit
                       </Button>
