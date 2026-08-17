@@ -18,6 +18,7 @@ namespace BookShopAPI.Data
         public DbSet<BookFormat> BookFormats { get; set; }
         public DbSet<Chapter> Chapters { get; set; }
         public DbSet<ReadingBookmark> ReadingBookmarks { get; set; }
+        public DbSet<LibraryItem> LibraryItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -68,6 +69,13 @@ namespace BookShopAPI.Data
                     .WithMany()
                     .HasForeignKey(e => e.ChapterId)
                     .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<LibraryItem>(entity =>
+            {
+                entity.HasIndex(e => new { e.UserId, e.BookId }).IsUnique();
+                entity.HasOne(e => e.User).WithMany().HasForeignKey(e => e.UserId).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(e => e.Book).WithMany().HasForeignKey(e => e.BookId).OnDelete(DeleteBehavior.Cascade);
             });
 
             // BookFormat configuration

@@ -31,7 +31,7 @@ export function BookItem({
       </div>
       <div className="flex items-center space-x-2">
         {/* Кол-во, если нужно */}
-        <QuantitySelector
+        {/* <QuantitySelector
           book={{
             id,
             title,
@@ -44,7 +44,7 @@ export function BookItem({
             rating: 0,
             quantity: 1,
           }}
-        />
+        /> */}
         <Button variant="outline" size="icon" onClick={() => removeItem(id)}>
           <Trash2 className="h-4 w-4" />
           <span className="sr-only">Remove book</span>

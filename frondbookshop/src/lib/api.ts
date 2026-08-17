@@ -103,6 +103,7 @@ export const apiConfig = {
     chapters: `${API_BASE_URL}/api/chapters`,
     readingBookmarks: `${API_BASE_URL}/api/reading-bookmarks`,
     reviews: `${API_BASE_URL}/api/reviews`,
+    library: `${API_BASE_URL}/api/library`,
   },
 };
 
@@ -230,4 +231,10 @@ export const reviewsApi = {
       method: "PUT",
       body: JSON.stringify({ rating }),
     }),
+};
+
+export const libraryApi = {
+  get: (token: string) => apiCallAuth<Book[]>(apiConfig.endpoints.library, token),
+  add: (token: string, bookId: number) =>
+    apiCallAuth<Book>(`${apiConfig.endpoints.library}/${bookId}`, token, { method: "POST" }),
 };

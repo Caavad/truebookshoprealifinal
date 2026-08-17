@@ -1,6 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { libraryApi } from "@/lib/api";
 import {
   Sheet,
   SheetContent,
@@ -13,7 +16,20 @@ import { BookOpen } from "lucide-react"; // иконка библиотеки в
 import { BookItem } from "./book-item"; // заменено с ProductItem
 
 export function Sidebar() {
-  const { books } = useLibraryStore();
+  const { books, setBooks } = useLibraryStore();
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === "loading") return;
+    if (!session?.accessToken) {
+      setBooks(() => []);
+      return;
+    }
+
+    libraryApi.get(session.accessToken)
+      .then((savedBooks) => setBooks(() => savedBooks))
+      .catch(() => setBooks(() => []));
+  }, [session?.accessToken, status, setBooks]);
 
   const libraryItems = books;
   const totalItems = libraryItems.length;
@@ -64,7 +80,7 @@ export function Sidebar() {
             <div className="flex justify-between text-sm">
               <span>Total</span>
             </div>
-            <Button className="w-full mt-4">Read All</Button>
+            {/*<Button className="w-full mt-4">Read All</Button>*/}
           </div>
         )}
       </SheetContent>

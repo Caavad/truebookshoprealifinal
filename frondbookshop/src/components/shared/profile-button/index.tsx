@@ -11,9 +11,14 @@ export default function ProfileButton() {
   return (
     <>
       {!session ? (
-        <Button>
-          <Link href="/auth/signin">Sign in </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button asChild>
+            <Link href="/auth/signin">Sign in</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/auth/signup">Sign up</Link>
+          </Button>
+        </div>
       ) : (
         <div className="flex items-center gap-2">
           {session.user?.role === "Admin" && (

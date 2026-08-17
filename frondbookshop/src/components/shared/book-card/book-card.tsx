@@ -13,6 +13,8 @@ import {
 import { usePathname } from "next/navigation";
 import { Book } from "@/helpers/interfaces/books";
 import { useLibraryStore } from "@/store";
+import { useSession } from "next-auth/react";
+import { libraryApi } from "@/lib/api";
 
 type BookCardProps = { book: Book };
 
@@ -21,8 +23,9 @@ export function BookCard({ book }: BookCardProps) {
   const isDocs = pathname.startsWith("/docs");
 
   const { setBooks } = useLibraryStore();
+  const { data: session } = useSession();
 
-  const addToLibrary = (
+  const addToLibrary = async (
     event: React.MouseEvent<HTMLButtonElement>,
     book: Book
   ) => {
@@ -34,6 +37,9 @@ export function BookCard({ book }: BookCardProps) {
       }
       return prev;
     });
+    if (session?.accessToken) {
+      await libraryApi.add(session.accessToken, book.id);
+    }
   };
 
   return (

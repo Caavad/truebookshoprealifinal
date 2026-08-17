@@ -116,6 +116,17 @@ public static class DatabaseInitializer
             await ExecuteSqlScriptAsync(connectionString, sql, logger, "008_MigrateBookContentToFirstChapter.sql");
             logger.LogInformation("Applied content-to-chapter update: 008_MigrateBookContentToFirstChapter.sql");
         }
+
+        if (!await TableExistsAsync(connectionString, "LibraryItems"))
+        {
+            var libraryPath = Path.Combine(migrationsPath, "009_AddLibraryItems.sql");
+            if (File.Exists(libraryPath))
+            {
+                var sql = await File.ReadAllTextAsync(libraryPath);
+                await ExecuteSqlScriptAsync(connectionString, sql, logger, "009_AddLibraryItems.sql");
+                logger.LogInformation("Applied schema update: 009_AddLibraryItems.sql");
+            }
+        }
     }
 
     private static async Task<bool> ColumnExistsAsync(string connectionString, string tableName, string columnName)

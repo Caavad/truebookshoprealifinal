@@ -4,11 +4,14 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useLibraryStore } from "@/store";
 import { Book } from "@/helpers/interfaces/books";
+import { useSession } from "next-auth/react";
+import { libraryApi } from "@/lib/api";
 
 export default function CardActions({ book }: { book: Book }) {
   const { setBooks } = useLibraryStore();
+  const { data: session } = useSession();
 
-  const addToLibrary = (
+  const addToLibrary = async (
     event: React.MouseEvent<HTMLButtonElement>,
     book: Book
   ) => {
@@ -20,6 +23,9 @@ export default function CardActions({ book }: { book: Book }) {
       }
       return prev;
     });
+    if (session?.accessToken) {
+      await libraryApi.add(session.accessToken, book.id);
+    }
   };
 
   return (

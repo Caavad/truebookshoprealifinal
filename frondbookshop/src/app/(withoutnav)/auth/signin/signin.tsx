@@ -163,7 +163,7 @@ export default function SignIn() {
                             : "border-white/20 bg-white/5 text-gray-300 hover:bg-white/10"
                         }`}
                       >
-                        Translator (Author)
+                        Translator
                       </button>
                     </div>
                     <p className="text-xs text-gray-400">
