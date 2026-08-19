@@ -6,6 +6,7 @@ import CardActions from "@/components/shared/card-actions";
 import { ApiUnavailable } from "@/components/shared/api-unavailable";
 import { BookRating } from "@/components/shared/book-rating";
 import { fetchBooks, filterByCategory, filterBySubCategory } from "@/lib/fetch-books";
+import { slugify } from "@/lib/book-categories";
 
 function titleFromSlug(value: string) {
   return value.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
@@ -67,7 +68,7 @@ export default async function DocsRoute({
       <div className="flex flex-col gap-1">
         <div className="text-sm text-zinc-400">
           <Link href="/docs" className="hover:text-white">All books</Link>
-          {isSubCategory && <>{" / "}<Link href={`/docs/${category}`} className="hover:text-white">{titleFromSlug(category)}</Link></>}
+          {isSubCategory && <>{" / "}<Link href={`/docs/${slugify(category) || category}`} className="hover:text-white">{titleFromSlug(category)}</Link></>}
         </div>
         <h1 className="text-3xl font-bold capitalize">{heading}</h1>
         <p className="text-lg text-muted-foreground">{isSubCategory ? "Explore books in this subcategory" : `Explore books in the ${heading} category`}</p>

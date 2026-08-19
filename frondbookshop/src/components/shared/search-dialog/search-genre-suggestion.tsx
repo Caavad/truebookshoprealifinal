@@ -2,18 +2,27 @@
 
 import { CommandGroup, CommandItem } from "@/components/ui/command";
 import { BookOpen, FolderOpen } from "lucide-react";
-import { getAllGenres, GenreSearchResult } from "@/utils/actions/search-genres";
+import { GenreSearchResult } from "@/utils/actions/search-genres";
 
 interface SearchGenreSuggestionProps {
+  genres: GenreSearchResult[];
   onSelect: (genre: GenreSearchResult) => void;
 }
 
 export default function SearchGenreSuggestion({
+  genres,
   onSelect,
 }: SearchGenreSuggestionProps) {
-  const genres = getAllGenres();
   const categories = genres.filter((item) => item.type === "category");
   const subcategories = genres.filter((item) => item.type === "subcategory");
+
+  if (genres.length === 0) {
+    return (
+      <CommandGroup heading="Genres">
+        <CommandItem disabled>No genres available.</CommandItem>
+      </CommandGroup>
+    );
+  }
 
   return (
     <>
@@ -31,7 +40,7 @@ export default function SearchGenreSuggestion({
       </CommandGroup>
 
       <CommandGroup heading="Subcategories">
-        {subcategories.slice(0, 6).map((genre) => (
+        {subcategories.slice(0, 8).map((genre) => (
           <CommandItem
             key={genre.id}
             value={`${genre.parentCategory} ${genre.title}`}

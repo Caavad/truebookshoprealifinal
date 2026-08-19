@@ -1,4 +1,5 @@
 import { Book, Chapter } from "@/helpers/interfaces/books";
+import { CategoryDto, SubCategoryDto } from "@/helpers/interfaces/categories";
 
 export interface UserDto {
   id: number;
@@ -104,6 +105,7 @@ export const apiConfig = {
     readingBookmarks: `${API_BASE_URL}/api/reading-bookmarks`,
     reviews: `${API_BASE_URL}/api/reviews`,
     library: `${API_BASE_URL}/api/library`,
+    categories: `${API_BASE_URL}/api/categories`,
   },
 };
 
@@ -237,4 +239,26 @@ export const libraryApi = {
   get: (token: string) => apiCallAuth<Book[]>(apiConfig.endpoints.library, token),
   add: (token: string, bookId: number) =>
     apiCallAuth<Book>(`${apiConfig.endpoints.library}/${bookId}`, token, { method: "POST" }),
+};
+
+export const categoriesApi = {
+  getAll: () => apiCall<CategoryDto[]>(apiConfig.endpoints.categories),
+  create: (token: string, payload: { name: string; description?: string }) =>
+    apiCallAuth<CategoryDto>(apiConfig.endpoints.categories, token, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+  createSub: (
+    token: string,
+    categoryId: number,
+    payload: { name: string; description?: string }
+  ) =>
+    apiCallAuth<SubCategoryDto>(
+      `${apiConfig.endpoints.categories}/${categoryId}/subcategories`,
+      token,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }
+    ),
 };

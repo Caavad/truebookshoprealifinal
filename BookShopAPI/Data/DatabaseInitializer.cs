@@ -1,6 +1,7 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using BookShopAPI.Models;
+using BookShopAPI.Services.Interfaces;
 
 namespace BookShopAPI.Data;
 
@@ -49,6 +50,7 @@ public static class DatabaseInitializer
 
         await SeedAdminUserAsync(scope.ServiceProvider, logger);
         await ApplySchemaUpdatesAsync(connectionString, environment, logger);
+        await SeedCategoriesAsync(scope.ServiceProvider, logger);
     }
 
     private static async Task ApplySchemaUpdatesAsync(
@@ -127,6 +129,17 @@ public static class DatabaseInitializer
                 logger.LogInformation("Applied schema update: 009_AddLibraryItems.sql");
             }
         }
+
+        if (!await TableExistsAsync(connectionString, "Categories"))
+        {
+            var categoriesPath = Path.Combine(migrationsPath, "010_AddCategories.sql");
+            if (File.Exists(categoriesPath))
+            {
+                var sql = await File.ReadAllTextAsync(categoriesPath);
+                await ExecuteSqlScriptAsync(connectionString, sql, logger, "010_AddCategories.sql");
+                logger.LogInformation("Applied schema update: 010_AddCategories.sql");
+            }
+        }
     }
 
     private static async Task<bool> ColumnExistsAsync(string connectionString, string tableName, string columnName)
@@ -144,6 +157,20 @@ public static class DatabaseInitializer
 
         var result = await command.ExecuteScalarAsync();
         return Convert.ToInt32(result) > 0;
+    }
+
+    private static async Task SeedCategoriesAsync(IServiceProvider serviceProvider, ILogger logger)
+    {
+        try
+        {
+            var categoryService = serviceProvider.GetRequiredService<ICategoryService>();
+            await categoryService.SeedDefaultsAsync();
+            logger.LogInformation("Genre catalog seeded");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to seed genre catalog");
+        }
     }
 
     private static async Task SeedAdminUserAsync(IServiceProvider serviceProvider, ILogger logger)

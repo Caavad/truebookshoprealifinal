@@ -17,7 +17,8 @@ interface NavItemProps {
 
 export default function NavMenuItem({ item }: NavItemProps) {
   const path = usePathname();
-  const isActive = path.startsWith(`/docs/${item.name.toLowerCase()}`);
+  const slug = item.category || item.name.toLowerCase();
+  const isActive = path.startsWith(`/docs/${slug}`);
   
   return (
     <NavigationMenuItem>
@@ -63,7 +64,7 @@ const ListItem = React.forwardRef<
             {children}
           </p>
         </a>
-      </NavigationMenuLink>x
+      </NavigationMenuLink>
     </li>
   );
 });

@@ -19,6 +19,8 @@ namespace BookShopAPI.Data
         public DbSet<Chapter> Chapters { get; set; }
         public DbSet<ReadingBookmark> ReadingBookmarks { get; set; }
         public DbSet<LibraryItem> LibraryItems { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<SubCategory> SubCategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -76,6 +78,22 @@ namespace BookShopAPI.Data
                 entity.HasIndex(e => new { e.UserId, e.BookId }).IsUnique();
                 entity.HasOne(e => e.User).WithMany().HasForeignKey(e => e.UserId).OnDelete(DeleteBehavior.Cascade);
                 entity.HasOne(e => e.Book).WithMany().HasForeignKey(e => e.BookId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Category>(entity =>
+            {
+                entity.HasIndex(e => e.Slug).IsUnique();
+                entity.HasIndex(e => e.Name).IsUnique();
+            });
+
+            modelBuilder.Entity<SubCategory>(entity =>
+            {
+                entity.HasIndex(e => new { e.CategoryId, e.Slug }).IsUnique();
+                entity.HasIndex(e => new { e.CategoryId, e.Name }).IsUnique();
+                entity.HasOne(e => e.Category)
+                    .WithMany(c => c.SubCategories)
+                    .HasForeignKey(e => e.CategoryId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // BookFormat configuration

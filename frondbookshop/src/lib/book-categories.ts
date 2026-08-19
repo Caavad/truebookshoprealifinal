@@ -9,8 +9,12 @@ export function slugify(value: string) {
   return value
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-");
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\p{L}\p{N}\s-]/gu, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 export function buildBookPath(
@@ -18,7 +22,17 @@ export function buildBookPath(
   _subCategory: string,
   title: string
 ) {
-  const categorySlug = slugify(category);
-  const titleSlug = slugify(title);
+  const categorySlug = slugify(category) || "books";
+  const titleSlug = slugify(title) || "new-book";
   return `/docs/${categorySlug}/${titleSlug}`;
+}
+
+export function matchesGenre(storedValue: string, needle: string) {
+  const stored = slugify(storedValue);
+  const wanted = slugify(needle);
+  if (stored && wanted && stored === wanted) return true;
+
+  const compact = (value: string) =>
+    value.trim().toLowerCase().replace(/-/g, " ");
+  return compact(storedValue) === compact(needle);
 }

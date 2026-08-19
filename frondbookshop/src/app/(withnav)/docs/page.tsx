@@ -1,12 +1,18 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookCard } from "@/components/shared/book-card/book-card";
 import { ApiUnavailable } from "@/components/shared/api-unavailable";
-import { fetchBooks } from "@/lib/fetch-books";
+import { fetchBooks, fetchCategories } from "@/lib/fetch-books";
+import { slugify } from "@/lib/book-categories";
+import { withFallbackCategories } from "@/lib/categories";
 import { GoArrowRight } from "react-icons/go";
 import Link from "next/link";
 
 export default async function AllBooksPage() {
-  const { books: allBooks, error } = await fetchBooks();
+  const [{ books: allBooks, error }, catalog] = await Promise.all([
+    fetchBooks(),
+    fetchCategories(),
+  ]);
+  const categories = withFallbackCategories(catalog);
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -32,13 +38,20 @@ export default async function AllBooksPage() {
           <section className="mb-12">
             <h2 className="text-2xl font-semibold mb-6">Browse by Category</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {Array.from(new Set(allBooks.map((book) => book.category))).map((category) => {
-                const categoryBooks = allBooks.filter((book) => book.category === category);
+              {categories.map((category) => {
+                const categoryBooks = allBooks.filter(
+                  (book) =>
+                    book.category.toLowerCase() === category.name.toLowerCase() ||
+                    slugify(book.category) === category.slug
+                );
+                const href = `/docs/${category.slug || slugify(category.name)}`;
                 return (
-                  <Link key={category} href={`/docs/${category.toLowerCase()}`}>
+                  <Link key={category.id} href={href}>
                     <Card className="hover:bg-gray-800 transition-colors cursor-pointer">
                       <CardHeader>
-                        <CardTitle className="text-lg">{category}</CardTitle>
+                        <CardTitle className="text-lg">
+                          {category.displayName || category.name}
+                        </CardTitle>
                         <CardDescription>
                           {categoryBooks.length} books available
                         </CardDescription>

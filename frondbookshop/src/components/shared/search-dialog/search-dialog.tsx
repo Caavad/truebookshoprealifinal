@@ -19,11 +19,14 @@ import {
 
 import { useRouter } from "next/navigation";
 import { Book } from "@/helpers/interfaces/books";
+import { CategoryDto } from "@/helpers/interfaces/categories";
 import { searchBooks } from "@/utils/actions/search-books";
 import {
   GenreSearchResult,
+  genresFromCategories,
   searchGenres,
 } from "@/utils/actions/search-genres";
+import { categoriesApi } from "@/lib/api";
 import SearchResult from "./search-result";
 import SearchSuggestion from "./search-suggestion";
 import SearchGenreResult from "./search-genre-result";
@@ -40,6 +43,7 @@ export function SearchDialog() {
   const [genreResults, setGenreResults] = React.useState<GenreSearchResult[]>(
     []
   );
+  const [categories, setCategories] = React.useState<CategoryDto[]>([]);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -59,7 +63,13 @@ export function SearchDialog() {
       setBookResults([]);
       setGenreResults([]);
       setSearchMode("books");
+      return;
     }
+
+    categoriesApi
+      .getAll()
+      .then(setCategories)
+      .catch(() => setCategories([]));
   }, [open]);
 
   React.useEffect(() => {
@@ -82,13 +92,13 @@ export function SearchDialog() {
         }
         setGenreResults([]);
       } else {
-        setGenreResults(searchGenres(query));
+        setGenreResults(searchGenres(query, categories));
         setBookResults([]);
       }
     }, 250);
 
     return () => clearTimeout(timer);
-  }, [searchQuery, searchMode]);
+  }, [searchQuery, searchMode, categories]);
 
   const handleBookSelect = (book: Book) => {
     router.push(book.path);
@@ -155,9 +165,15 @@ export function SearchDialog() {
           <CommandList>
             {!hasQuery ? (
               searchMode === "books" ? (
-                <SearchSuggestion />
+                <SearchSuggestion
+                  genres={genresFromCategories(categories)}
+                  onSelectGenre={handleGenreSelect}
+                />
               ) : (
-                <SearchGenreSuggestion onSelect={handleGenreSelect} />
+                <SearchGenreSuggestion
+                  genres={genresFromCategories(categories)}
+                  onSelect={handleGenreSelect}
+                />
               )
             ) : hasResults ? (
               searchMode === "books" ? (

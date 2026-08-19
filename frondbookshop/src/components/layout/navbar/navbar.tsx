@@ -16,8 +16,8 @@ import { cn } from "@/lib/utils";
 import { SearchDialog } from "../../shared/search-dialog/search-dialog";
 import { Sidebar } from "../../shared/sidebar/sidebar";
 
-import { books } from "@/data/navbar"; // ✅ Локальные категории
-import { NavBarProps } from "@/helpers/interfaces/navbar"; // должен соответствовать структуре categories
+import { books } from "@/data/navbar";
+import { NavBarProps } from "@/helpers/interfaces/navbar";
 
 export default function NavBar() {
   return (
@@ -61,7 +61,6 @@ export default function NavBar() {
                 </NavigationMenuContent>
               </NavigationMenuItem>
 
-              {/* Loop through book categories */}
               {books.map((navItem: NavBarProps) => (
                 <NavMenuItem key={navItem.id} item={navItem} />
               ))}
@@ -72,7 +71,7 @@ export default function NavBar() {
           <SearchDialog />
           <Sidebar />
           <ProfileButton />
-        </div> 
+        </div>
       </div>
     </div>
   );

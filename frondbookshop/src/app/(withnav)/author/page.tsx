@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -11,11 +11,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book, Chapter } from "@/helpers/interfaces/books";
 import {
   booksApi,
+  categoriesApi,
   chaptersApi,
   CreateBookPayload,
   UpdateBookPayload,
 } from "@/lib/api";
-import { BOOK_CATEGORIES, buildBookPath } from "@/lib/book-categories";
+import { buildBookPath } from "@/lib/book-categories";
+import { GenrePicker } from "@/components/shared/genre-picker";
+import { CategoryDto } from "@/helpers/interfaces/categories";
 
 const emptyBookForm = {
   title: "",
@@ -51,15 +54,11 @@ export default function AuthorPage() {
   const [authorMode, setAuthorMode] = useState<"self" | "other">("self");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<CategoryDto[]>([]);
 
   const token = session?.accessToken;
   const isAuthor = session?.user?.role === "Author" || session?.user?.role === "Admin";
   const selfAuthorName = session?.user?.name?.trim() || "";
-
-  const subcategories = useMemo(
-    () => BOOK_CATEGORIES[form.category] ?? [],
-    [form.category]
-  );
 
   useEffect(() => {
     if (status === "loading") return;
@@ -92,8 +91,12 @@ export default function AuthorPage() {
     if (!token) return;
     setLoading(true);
     try {
-      const data = await booksApi.getMyBooks(token);
+      const [data, categoriesData] = await Promise.all([
+        booksApi.getMyBooks(token),
+        categoriesApi.getAll().catch(() => [] as CategoryDto[]),
+      ]);
       setBooks(data);
+      setCategories(categoriesData);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load books");
     } finally {
@@ -117,15 +120,20 @@ export default function AuthorPage() {
   ) {
     setForm((prev) => {
       const next = { ...prev, [key]: value };
-      if (key === "category") {
-        const subs = BOOK_CATEGORIES[value as string] ?? [];
-        next.subCategory = subs[0] ?? "";
-      }
       if (["title", "category", "subCategory"].includes(key)) {
         next.path = buildBookPath(next.category, next.subCategory, next.title || "new-book");
       }
       return next;
     });
+  }
+
+  function handleGenreChange(nextCategory: string, nextSubCategory: string) {
+    setForm((prev) => ({
+      ...prev,
+      category: nextCategory,
+      subCategory: nextSubCategory,
+      path: buildBookPath(nextCategory, nextSubCategory, prev.title || "new-book"),
+    }));
   }
 
   function startEdit(book: Book) {
@@ -306,32 +314,14 @@ export default function AuthorPage() {
                 onChange={(e) => updateFormField("author", e.target.value)}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label>Genre</Label>
-                <select
-                  className="h-10 rounded-md border border-zinc-700 bg-zinc-950 px-3"
-                  value={form.category}
-                  onChange={(e) => updateFormField("category", e.target.value)}
-                >
-                  {Object.keys(BOOK_CATEGORIES).map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="grid gap-2">
-                <Label>Subgenre</Label>
-                <select
-                  className="h-10 rounded-md border border-zinc-700 bg-zinc-950 px-3"
-                  value={form.subCategory}
-                  onChange={(e) => updateFormField("subCategory", e.target.value)}
-                >
-                  {subcategories.map((s) => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            <GenrePicker
+              token={token}
+              category={form.category}
+              subCategory={form.subCategory}
+              categories={categories}
+              onCategoriesChange={setCategories}
+              onChange={handleGenreChange}
+            />
             <div className="grid gap-2">
               <Label>Cover URL</Label>
               <Input value={form.coverUrl} onChange={(e) => updateFormField("coverUrl", e.target.value)} />

@@ -1,6 +1,7 @@
 using AutoMapper;
 using BookShopAPI.Data;
 using BookShopAPI.DTOs;
+using BookShopAPI.Helpers;
 using BookShopAPI.Models;
 using BookShopAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -11,11 +12,13 @@ public class BookService : IBookService
 {
     private readonly BookShopDbContext _context;
     private readonly IMapper _mapper;
+    private readonly ICategoryService _categoryService;
 
-    public BookService(BookShopDbContext context, IMapper mapper)
+    public BookService(BookShopDbContext context, IMapper mapper, ICategoryService categoryService)
     {
         _context = context;
         _mapper = mapper;
+        _categoryService = categoryService;
     }
 
     public async Task<IEnumerable<BookDto>> GetAllBooksAsync()
@@ -78,10 +81,22 @@ public class BookService : IBookService
 
     public async Task<IEnumerable<BookDto>> GetBooksByCategoryAsync(string category)
     {
+        var needle = category.Trim().ToLower();
+        var slug = SlugHelper.Slugify(category);
         var books = await _context.Books
             .Include(b => b.Formats)
-            .Where(b => b.Category.ToLower() == category.ToLower())
+            .Where(b => b.Category.ToLower() == needle)
             .ToListAsync();
+
+        if (books.Count == 0 && !string.IsNullOrWhiteSpace(slug))
+        {
+            books = await _context.Books
+                .Include(b => b.Formats)
+                .ToListAsync();
+            books = books
+                .Where(b => SlugHelper.Slugify(b.Category) == slug)
+                .ToList();
+        }
         
         return _mapper.Map<IEnumerable<BookDto>>(books);
     }
@@ -92,7 +107,9 @@ public class BookService : IBookService
             .Include(b => b.Formats)
             .Where(b => b.Title.Contains(searchTerm) || 
                        b.Author.Contains(searchTerm) || 
-                       b.Description.Contains(searchTerm))
+                       b.Description.Contains(searchTerm) ||
+                       b.Category.Contains(searchTerm) ||
+                       b.SubCategory.Contains(searchTerm))
             .ToListAsync();
         
         return _mapper.Map<IEnumerable<BookDto>>(books);
@@ -100,6 +117,8 @@ public class BookService : IBookService
 
     public async Task<BookDto> CreateBookAsync(CreateBookDto createBookDto, int? authorId = null)
     {
+        await _categoryService.EnsureCatalogEntryAsync(createBookDto.Category, createBookDto.SubCategory);
+
         var book = _mapper.Map<Book>(createBookDto);
         book.AuthorId = authorId;
         book.CreatedAt = DateTime.UtcNow;
@@ -126,6 +145,8 @@ public class BookService : IBookService
     {
         var book = await _context.Books.FindAsync(id);
         if (book == null) return null;
+
+        await _categoryService.EnsureCatalogEntryAsync(updateBookDto.Category, updateBookDto.SubCategory);
 
         _mapper.Map(updateBookDto, book);
         book.UpdatedAt = DateTime.UtcNow;

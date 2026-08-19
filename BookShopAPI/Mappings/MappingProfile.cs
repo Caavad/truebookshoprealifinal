@@ -62,6 +62,10 @@ namespace BookShopAPI.Mappings
                 .ForMember(dest => dest.Reviews, opt => opt.Ignore())
                 .ForMember(dest => dest.AuthorUser, opt => opt.Ignore());
 
+            CreateMap<Category, CategoryDto>()
+                .ForMember(dest => dest.SubCategories, opt => opt.Ignore());
+            CreateMap<SubCategory, SubCategoryDto>();
+
             CreateMap<Chapter, ChapterDto>();
             CreateMap<CreateChapterDto, Chapter>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())

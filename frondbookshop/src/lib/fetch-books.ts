@@ -1,5 +1,7 @@
 import { Book } from "@/helpers/interfaces/books";
+import { CategoryDto } from "@/helpers/interfaces/categories";
 import { getApiCandidates } from "@/lib/api-config";
+import { matchesGenre } from "@/lib/book-categories";
 
 export type FetchBooksResult = {
   books: Book[];
@@ -46,14 +48,29 @@ export async function fetchBooks(retries = 4, delayMs = 800): Promise<FetchBooks
   };
 }
 
+export async function fetchCategories(): Promise<CategoryDto[]> {
+  for (const baseUrl of getApiCandidates()) {
+    try {
+      const response = await fetch(`${baseUrl}/api/categories`, {
+        cache: "no-store",
+      });
+      if (response.ok) {
+        return (await response.json()) as CategoryDto[];
+      }
+    } catch {
+      // Try the next configured API URL.
+    }
+  }
+
+  return [];
+}
+
 export function filterByCategory(books: Book[], category: string): Book[] {
-  const needle = category.trim().toLowerCase();
-  return books.filter((book) => book.category.toLowerCase() === needle);
+  return books.filter((book) => matchesGenre(book.category, category));
 }
 
 export function filterBySubCategory(books: Book[], subCategory: string): Book[] {
-  const needle = subCategory.trim().toLowerCase().replace(/-/g, " ");
-  return books.filter(
-    (book) => (book.subCategory || "").toLowerCase().replace(/-/g, " ") === needle
+  return books.filter((book) =>
+    matchesGenre(book.subCategory || "", subCategory)
   );
 }
