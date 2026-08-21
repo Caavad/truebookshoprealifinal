@@ -44,6 +44,10 @@ public class AuthService : IAuthService
         if (existingUser != null)
             throw new InvalidOperationException("User with this email already exists");
 
+        var existingUsername = await _userService.GetUserByUsernameAsync(createUserDto.Username);
+        if (existingUsername != null)
+            throw new InvalidOperationException("User with this username already exists");
+
         var user = await _userService.CreateUserAsync(createUserDto);
         var token = GenerateJwtToken(user);
         var expiresAt = DateTime.UtcNow.AddHours(24);

@@ -17,22 +17,30 @@ export async function POST(req: NextRequest) {
     const nameParts = fullName.trim().split(/\s+/)
     const firstName = nameParts[0] || fullName
     const lastName = nameParts.slice(1).join(" ") || firstName
-    const username = email.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_")
+    const baseUsername = email.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_")
 
-    const response = await fetch(`${API_URL}/api/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email,
-        username,
-        firstName,
-        lastName,
-        password,
-        role: role || "Customer",
-      }),
-    })
+    const register = (username: string) =>
+      fetch(`${API_URL}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          username,
+          firstName,
+          lastName,
+          password,
+          role: role || "Customer",
+        }),
+      })
 
-    const data = await response.json()
+    let response = await register(baseUsername)
+    let data = await response.json()
+
+    // The username is derived from the email, so different emails can collide.
+    if (!response.ok && typeof data?.message === "string" && data.message.includes("username")) {
+      response = await register(`${baseUsername}_${Date.now().toString().slice(-5)}`)
+      data = await response.json()
+    }
 
     if (!response.ok) {
       return NextResponse.json(
