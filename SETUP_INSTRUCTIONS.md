@@ -56,6 +56,34 @@ sqlcmd -S "(localdb)\MSSQLLocalDB" -d BookShopDB -i Migrations/002_SeedBooks.sql
 sqlcmd -S "(localdb)\MSSQLLocalDB" -d BookShopDB -i Migrations\002_SeedBooks.sql
 ```
 
+### 2.1. Аккаунт администратора
+
+При старте API создаёт админа, если его ещё нет в базе:
+
+- Email: `admin@bookshop.com`
+- Пароль: `Admin123!`
+
+Значения можно переопределить переменными окружения:
+
+```bash
+AdminUser__Email=admin@bookshop.com
+AdminUser__Username=admin
+AdminUser__Password=Admin123!
+```
+
+Если админ уже есть в базе, но пароль неизвестен (ошибка `Invalid credentials`),
+запустите API один раз со сбросом пароля:
+
+```bash
+AdminUser__ResetPassword=true dotnet run
+```
+
+```powershell
+$env:AdminUser__ResetPassword="true"; dotnet run
+```
+
+После входа уберите эту переменную и смените пароль.
+
 ### 3. Запуск frondbookshop (Frontend)
 
 В новом терминале:

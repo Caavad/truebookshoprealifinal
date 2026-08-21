@@ -176,20 +176,48 @@ public static class DatabaseInitializer
     private static async Task SeedAdminUserAsync(IServiceProvider serviceProvider, ILogger logger)
     {
         var context = serviceProvider.GetRequiredService<BookShopDbContext>();
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
-        if (await context.Users.AnyAsync(u => u.Email == "admin@bookshop.com"))
+        var email = configuration["AdminUser:Email"] ?? "admin@bookshop.com";
+        var password = configuration["AdminUser:Password"] ?? "Admin123!";
+        var resetPassword = configuration.GetValue("AdminUser:ResetPassword", false);
+
+        var existing = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        if (existing != null)
         {
-            logger.LogInformation("Admin user already exists");
+            var changed = false;
+
+            if (existing.Role != UserRole.Admin || !existing.IsActive)
+            {
+                existing.Role = UserRole.Admin;
+                existing.IsActive = true;
+                changed = true;
+            }
+
+            if (resetPassword)
+            {
+                existing.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
+                changed = true;
+                logger.LogInformation("Admin password reset for {Email}", email);
+            }
+
+            if (changed)
+            {
+                existing.UpdatedAt = DateTime.UtcNow;
+                await context.SaveChangesAsync();
+            }
+
+            logger.LogInformation("Admin user already exists: {Email}", email);
             return;
         }
 
         var admin = new User
         {
-            Email = "admin@bookshop.com",
-            Username = "admin",
-            FirstName = "Admin",
-            LastName = "User",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
+            Email = email,
+            Username = configuration["AdminUser:Username"] ?? "admin",
+            FirstName = configuration["AdminUser:FirstName"] ?? "Admin",
+            LastName = configuration["AdminUser:LastName"] ?? "User",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
             Role = UserRole.Admin,
             IsActive = true,
             CreatedAt = DateTime.UtcNow,
@@ -198,7 +226,7 @@ public static class DatabaseInitializer
 
         context.Users.Add(admin);
         await context.SaveChangesAsync();
-        logger.LogInformation("Default admin user created: admin@bookshop.com");
+        logger.LogInformation("Default admin user created: {Email}", email);
     }
 
     private static async Task EnsureDatabaseExistsAsync(string connectionString, ILogger logger)
