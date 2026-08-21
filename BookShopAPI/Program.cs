@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using AutoMapper;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Serilog;
 
@@ -79,13 +80,17 @@ builder.Services.AddAuthorization();
 // FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<BookShopAPI.Validators.CreateUserDtoValidator>();
 
 // Add CORS
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? new[] { "http://localhost:3000", "https://localhost:3000" };
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "https://localhost:3000")
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -144,6 +149,8 @@ using (var scope = app.Services.CreateScope())
         var context = scope.ServiceProvider.GetRequiredService<BookShopDbContext>();
         context.Database.EnsureCreated();
         Console.WriteLine("✅ Database verified/created successfully");
+
+        await BookShopAPI.Data.DbSeeder.SeedAdminAsync(context, app.Configuration);
     }
     catch (Exception ex)
     {
@@ -160,7 +167,12 @@ if (app.Environment.IsDevelopment())
   
 }
 */
-app.UseHttpsRedirection();
+if (app.Urls.Any(url => url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+    || builder.Configuration["ASPNETCORE_URLS"]?.Contains("https://", StringComparison.OrdinalIgnoreCase) == true)
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseCors("AllowFrontend");
 
 // Global exception handling

@@ -29,6 +29,19 @@ GITHUB_ID=
 GITHUB_SECRET=
 ```
 
+## Учётная запись администратора
+
+Админ создаётся автоматически при старте API из секции `AdminUser` конфигурации
+(`appsettings.Development.json` или переменные окружения):
+
+```
+AdminUser__Email=admin@bookshop.com
+AdminUser__Username=admin
+AdminUser__Password=Admin123!
+```
+
+Если секция не задана, админ не создаётся. Пароль по умолчанию нужно сменить перед деплоем.
+
 ## Запуск приложения
 
 ### 1. Запуск BookShopAPI (Backend)

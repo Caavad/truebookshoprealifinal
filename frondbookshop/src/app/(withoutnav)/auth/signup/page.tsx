@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formRegisterSchema, TFormRegisterValues } from "../schema";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function SignUp() {
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function SignUp() {
     register,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<TFormRegisterValues>({
     resolver: zodResolver(formRegisterSchema),
   });
@@ -37,15 +38,20 @@ export default function SignUp() {
         body: JSON.stringify(data),
       });
 
-      const result = await response.json();
+      const result = await response.json().catch(() => null);
 
       if (!response.ok) {
-        if (result.error) {
-          setError("email", { message: result.error });
-        }
+        setError("email", { message: result?.error ?? "Registration failed" });
+        return;
       }
 
-      router.push("/auth/signin");
+      const signInResult = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+
+      router.push(signInResult?.ok ? "/" : "/auth/signin");
     } catch (error) {
       setError("email", { message: String(error) });
     }
@@ -137,8 +143,8 @@ export default function SignUp() {
                 </div>
               </div>
               <CardFooter className="flex flex-col mt-8">
-                <Button type="submit" className="w-full mb-5">
-                  Continue
+                <Button type="submit" className="w-full mb-5" disabled={isSubmitting}>
+                  {isSubmitting ? "Creating account..." : "Continue"}
                 </Button>
                 <div className="w-full flex justify-between text-sm">
                   <div className="flex space-x-2">

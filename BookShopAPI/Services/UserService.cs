@@ -39,6 +39,14 @@ public class UserService : IUserService
         return user != null ? _mapper.Map<UserDto>(user) : null;
     }
 
+    public async Task<UserDto?> GetUserByUsernameAsync(string username)
+    {
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Username == username);
+
+        return user != null ? _mapper.Map<UserDto>(user) : null;
+    }
+
     public async Task<UserDto> CreateUserAsync(CreateUserDto createUserDto)
     {
         var user = _mapper.Map<User>(createUserDto);
