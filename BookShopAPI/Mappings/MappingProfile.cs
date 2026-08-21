@@ -10,6 +10,20 @@ namespace BookShopAPI.Mappings
         {
             // User mappings
             CreateMap<User, UserDto>().ReverseMap();
+
+            CreateMap<CreateUserDto, User>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
+                .ForMember(dest => dest.Role, opt => opt.Ignore())
+                .ForMember(dest => dest.IsActive, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.LastLoginAt, opt => opt.Ignore())
+                .ForMember(dest => dest.Orders, opt => opt.Ignore())
+                .ForMember(dest => dest.Reviews, opt => opt.Ignore());
+
+            CreateMap<UpdateUserDto, User>()
+                .ForAllMembers(opt => opt.Condition((src, dest, value) => value != null));
             
             // Book mappings
             CreateMap<Book, BookDto>()

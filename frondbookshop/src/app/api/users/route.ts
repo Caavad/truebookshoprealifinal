@@ -1,63 +1,52 @@
-export {};
-// import { NextRequest, NextResponse } from "next/server";
-// import { prisma } from "../../../../prisma/prisma-client";
-// import bcrypt from "bcryptjs";
-// import { formRegisterSchema } from "@/app/(withoutnav)/auth/schema";
+import { NextRequest, NextResponse } from "next/server"
+import { formRegisterSchema } from "@/app/(withoutnav)/auth/schema"
+import { API_URL } from "@/lib/apiUrl"
 
-// export async function GET() {
-//   // SELECT * FROM users WHERE email = 'email'
+function buildUsername(fullName: string, email: string) {
+  const base = (fullName || email.split("@")[0])
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_|_$/g, "")
 
-//   const users = await prisma.user.findMany()
-//   return NextResponse.json(users)
-// }
+  return base.length >= 3 ? base.slice(0, 50) : `user_${email.split("@")[0]}`.slice(0, 50)
+}
 
-// // app/api/users/route.ts
+export async function POST(req: NextRequest) {
+  const body = await req.json()
 
-// export async function POST(req: NextRequest) {
-//   try {
-//     const body = await req.json()
-    
-//     // Validate input
-//     const result = formRegisterSchema.safeParse(body)
-//     if (!result.success) {
-//       return NextResponse.json({ error: "Invalid input" }, { status: 400 })
-//     }
-    
-//     const { fullName, email, password } = result.data
+  const parsed = formRegisterSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.errors[0]?.message ?? "Invalid input" }, { status: 400 })
+  }
 
-//     const existingUser = await prisma.user.findUnique({
-//       where: { email }
-//     })
+  const { fullName, email, password } = parsed.data
+  const [firstName, ...rest] = fullName.trim().split(/\s+/)
 
-//     if (existingUser) {
-//       return NextResponse.json(
-//         { error: "Email already in use" }, 
-//         { status: 400 }
-//       )
-//     }
+  try {
+    const res = await fetch(`${API_URL}/api/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        password,
+        username: buildUsername(fullName, email),
+        firstName,
+        lastName: rest.join(" ") || firstName,
+      }),
+    })
 
-//     const hashedPassword = await bcrypt.hash(password, 10)
+    const data = await res.json().catch(() => null)
 
-//     const user = await prisma.user.create({
-//       data: {
-//         fullName,
-//         email,
-//         password: hashedPassword
-//       },
-//       select: {
-//         id: true,
-//         fullName: true,
-//         email: true,
-//         createdAt: true
-//       }
-//     })
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: data?.message ?? data?.title ?? "Registration failed" },
+        { status: res.status }
+      )
+    }
 
-//     return NextResponse.json(user, { status: 201 })
-//   } catch (error) {
-//     console.error("Error creating user:", error)
-//     return NextResponse.json(
-//       { error: "Internal server error" }, 
-//       { status: 500 }
-//     )
-//   }
-// }
+    return NextResponse.json({ user: data?.user ?? null }, { status: 201 })
+  } catch {
+    return NextResponse.json({ error: "Cannot reach the API server" }, { status: 502 })
+  }
+}
