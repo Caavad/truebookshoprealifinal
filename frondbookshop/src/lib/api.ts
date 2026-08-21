@@ -223,15 +223,15 @@ export const readingBookmarksApi = {
 export const reviewsApi = {
   getByBook: (bookId: number) =>
     apiCall<ReviewDto[]>(`${apiConfig.endpoints.reviews}/book/${bookId}`),
-  create: (token: string, bookId: number, rating: number) =>
+  create: (token: string, bookId: number, rating: number, comment?: string) =>
     apiCallAuth<ReviewDto>(apiConfig.endpoints.reviews, token, {
       method: "POST",
-      body: JSON.stringify({ bookId, rating }),
+      body: JSON.stringify({ bookId, rating, comment }),
     }),
-  update: (token: string, reviewId: number, rating: number) =>
+  update: (token: string, reviewId: number, rating: number, comment?: string) =>
     apiCallAuth<ReviewDto>(`${apiConfig.endpoints.reviews}/${reviewId}`, token, {
       method: "PUT",
-      body: JSON.stringify({ rating }),
+      body: JSON.stringify({ rating, comment }),
     }),
 };
 

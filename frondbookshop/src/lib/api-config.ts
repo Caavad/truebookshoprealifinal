@@ -1,4 +1,7 @@
-const DEFAULT_API_URL = "http://localhost:5130";
+// The development launcher starts the ASP.NET API on port 7000. Keeping this
+// default in sync prevents authentication failures from being reported as
+// invalid credentials when the API is simply being contacted on the wrong port.
+const DEFAULT_API_URL = "http://localhost:7000";
 
 export function getApiBaseUrl(): string {
   return (
@@ -11,5 +14,5 @@ export function getApiBaseUrl(): string {
 
 export function getApiCandidates(): string[] {
   const configured = getApiBaseUrl();
-  return [...new Set([configured, DEFAULT_API_URL, "http://localhost:7000"])];
+  return [...new Set([configured, DEFAULT_API_URL, "http://localhost:5130"])];
 }

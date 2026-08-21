@@ -1,0 +1,120 @@
+2026-08-21 12:39:45.662 +04:00 [INF] Database BookShopDB is ready
+2026-08-21 12:39:46.057 +04:00 [INF] Database schema already exists
+2026-08-21 12:39:50.376 +04:00 [INF] Executed DbCommand (18ms) [Parameters=[@__email_0='?' (Size = 100)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[Id], [u].[CreatedAt], [u].[Email], [u].[FirstName], [u].[IsActive], [u].[LastLoginAt], [u].[LastName], [u].[PasswordHash], [u].[Role], [u].[UpdatedAt], [u].[Username]
+FROM [Users] AS [u]
+WHERE [u].[Email] = @__email_0
+2026-08-21 12:39:50.718 +04:00 [INF] Admin user already exists: admin@bookshop.com
+2026-08-21 12:39:50.957 +04:00 [INF] Applied seed update: 004_SeedBookContent.sql
+2026-08-21 12:39:50.985 +04:00 [INF] Applied fix: 005_FixNullBookFields.sql
+2026-08-21 12:39:51.089 +04:00 [INF] Applied content-to-chapter update: 008_MigrateBookContentToFirstChapter.sql
+2026-08-21 12:39:51.718 +04:00 [INF] Executed DbCommand (12ms) [Parameters=[@__slug_0='?' (Size = 80), @__ToLower_1='?' (Size = 50)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c0].[Id], [c0].[CreatedAt], [c0].[Description], [c0].[DisplayName], [c0].[Name], [c0].[Slug], [s].[Id], [s].[CategoryId], [s].[CreatedAt], [s].[Description], [s].[DisplayName], [s].[Name], [s].[Slug]
+FROM (
+    SELECT TOP(1) [c].[Id], [c].[CreatedAt], [c].[Description], [c].[DisplayName], [c].[Name], [c].[Slug]
+    FROM [Categories] AS [c]
+    WHERE [c].[Slug] = @__slug_0 OR LOWER([c].[Name]) = @__ToLower_1
+) AS [c0]
+LEFT JOIN [SubCategories] AS [s] ON [c0].[Id] = [s].[CategoryId]
+ORDER BY [c0].[Id]
+2026-08-21 12:39:51.889 +04:00 [INF] Executed DbCommand (1ms) [Parameters=[@__slug_0='?' (Size = 80), @__ToLower_1='?' (Size = 50)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c0].[Id], [c0].[CreatedAt], [c0].[Description], [c0].[DisplayName], [c0].[Name], [c0].[Slug], [s].[Id], [s].[CategoryId], [s].[CreatedAt], [s].[Description], [s].[DisplayName], [s].[Name], [s].[Slug]
+FROM (
+    SELECT TOP(1) [c].[Id], [c].[CreatedAt], [c].[Description], [c].[DisplayName], [c].[Name], [c].[Slug]
+    FROM [Categories] AS [c]
+    WHERE [c].[Slug] = @__slug_0 OR LOWER([c].[Name]) = @__ToLower_1
+) AS [c0]
+LEFT JOIN [SubCategories] AS [s] ON [c0].[Id] = [s].[CategoryId]
+ORDER BY [c0].[Id]
+2026-08-21 12:39:51.916 +04:00 [INF] Executed DbCommand (1ms) [Parameters=[@__slug_0='?' (Size = 80), @__ToLower_1='?' (Size = 50)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c0].[Id], [c0].[CreatedAt], [c0].[Description], [c0].[DisplayName], [c0].[Name], [c0].[Slug], [s].[Id], [s].[CategoryId], [s].[CreatedAt], [s].[Description], [s].[DisplayName], [s].[Name], [s].[Slug]
+FROM (
+    SELECT TOP(1) [c].[Id], [c].[CreatedAt], [c].[Description], [c].[DisplayName], [c].[Name], [c].[Slug]
+    FROM [Categories] AS [c]
+    WHERE [c].[Slug] = @__slug_0 OR LOWER([c].[Name]) = @__ToLower_1
+) AS [c0]
+LEFT JOIN [SubCategories] AS [s] ON [c0].[Id] = [s].[CategoryId]
+ORDER BY [c0].[Id]
+2026-08-21 12:39:51.944 +04:00 [INF] Executed DbCommand (1ms) [Parameters=[@__slug_0='?' (Size = 80), @__ToLower_1='?' (Size = 50)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c0].[Id], [c0].[CreatedAt], [c0].[Description], [c0].[DisplayName], [c0].[Name], [c0].[Slug], [s].[Id], [s].[CategoryId], [s].[CreatedAt], [s].[Description], [s].[DisplayName], [s].[Name], [s].[Slug]
+FROM (
+    SELECT TOP(1) [c].[Id], [c].[CreatedAt], [c].[Description], [c].[DisplayName], [c].[Name], [c].[Slug]
+    FROM [Categories] AS [c]
+    WHERE [c].[Slug] = @__slug_0 OR LOWER([c].[Name]) = @__ToLower_1
+) AS [c0]
+LEFT JOIN [SubCategories] AS [s] ON [c0].[Id] = [s].[CategoryId]
+ORDER BY [c0].[Id]
+2026-08-21 12:39:52.017 +04:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT DISTINCT [b].[Category], [b].[SubCategory]
+FROM [Books] AS [b]
+2026-08-21 12:39:52.074 +04:00 [INF] Executed DbCommand (2ms) [Parameters=[@__slug_0='?' (Size = 80), @__ToLower_1='?' (Size = 50)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c0].[Id], [c0].[CreatedAt], [c0].[Description], [c0].[DisplayName], [c0].[Name], [c0].[Slug], [s].[Id], [s].[CategoryId], [s].[CreatedAt], [s].[Description], [s].[DisplayName], [s].[Name], [s].[Slug]
+FROM (
+    SELECT TOP(1) [c].[Id], [c].[CreatedAt], [c].[Description], [c].[DisplayName], [c].[Name], [c].[Slug]
+    FROM [Categories] AS [c]
+    WHERE [c].[Slug] = @__slug_0 OR LOWER([c].[Name]) = @__ToLower_1
+) AS [c0]
+LEFT JOIN [SubCategories] AS [s] ON [c0].[Id] = [s].[CategoryId]
+ORDER BY [c0].[Id]
+2026-08-21 12:39:52.130 +04:00 [INF] Executed DbCommand (2ms) [Parameters=[@__slug_0='?' (Size = 80), @__ToLower_1='?' (Size = 50)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c0].[Id], [c0].[CreatedAt], [c0].[Description], [c0].[DisplayName], [c0].[Name], [c0].[Slug], [s].[Id], [s].[CategoryId], [s].[CreatedAt], [s].[Description], [s].[DisplayName], [s].[Name], [s].[Slug]
+FROM (
+    SELECT TOP(1) [c].[Id], [c].[CreatedAt], [c].[Description], [c].[DisplayName], [c].[Name], [c].[Slug]
+    FROM [Categories] AS [c]
+    WHERE [c].[Slug] = @__slug_0 OR LOWER([c].[Name]) = @__ToLower_1
+) AS [c0]
+LEFT JOIN [SubCategories] AS [s] ON [c0].[Id] = [s].[CategoryId]
+ORDER BY [c0].[Id]
+2026-08-21 12:39:52.176 +04:00 [INF] Executed DbCommand (2ms) [Parameters=[@__slug_0='?' (Size = 80), @__ToLower_1='?' (Size = 50)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c0].[Id], [c0].[CreatedAt], [c0].[Description], [c0].[DisplayName], [c0].[Name], [c0].[Slug], [s].[Id], [s].[CategoryId], [s].[CreatedAt], [s].[Description], [s].[DisplayName], [s].[Name], [s].[Slug]
+FROM (
+    SELECT TOP(1) [c].[Id], [c].[CreatedAt], [c].[Description], [c].[DisplayName], [c].[Name], [c].[Slug]
+    FROM [Categories] AS [c]
+    WHERE [c].[Slug] = @__slug_0 OR LOWER([c].[Name]) = @__ToLower_1
+) AS [c0]
+LEFT JOIN [SubCategories] AS [s] ON [c0].[Id] = [s].[CategoryId]
+ORDER BY [c0].[Id]
+2026-08-21 12:39:52.244 +04:00 [INF] Executed DbCommand (1ms) [Parameters=[@__slug_0='?' (Size = 80), @__ToLower_1='?' (Size = 50)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c0].[Id], [c0].[CreatedAt], [c0].[Description], [c0].[DisplayName], [c0].[Name], [c0].[Slug], [s].[Id], [s].[CategoryId], [s].[CreatedAt], [s].[Description], [s].[DisplayName], [s].[Name], [s].[Slug]
+FROM (
+    SELECT TOP(1) [c].[Id], [c].[CreatedAt], [c].[Description], [c].[DisplayName], [c].[Name], [c].[Slug]
+    FROM [Categories] AS [c]
+    WHERE [c].[Slug] = @__slug_0 OR LOWER([c].[Name]) = @__ToLower_1
+) AS [c0]
+LEFT JOIN [SubCategories] AS [s] ON [c0].[Id] = [s].[CategoryId]
+ORDER BY [c0].[Id]
+2026-08-21 12:39:52.309 +04:00 [INF] Executed DbCommand (2ms) [Parameters=[@__slug_0='?' (Size = 80), @__ToLower_1='?' (Size = 50)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c0].[Id], [c0].[CreatedAt], [c0].[Description], [c0].[DisplayName], [c0].[Name], [c0].[Slug], [s].[Id], [s].[CategoryId], [s].[CreatedAt], [s].[Description], [s].[DisplayName], [s].[Name], [s].[Slug]
+FROM (
+    SELECT TOP(1) [c].[Id], [c].[CreatedAt], [c].[Description], [c].[DisplayName], [c].[Name], [c].[Slug]
+    FROM [Categories] AS [c]
+    WHERE [c].[Slug] = @__slug_0 OR LOWER([c].[Name]) = @__ToLower_1
+) AS [c0]
+LEFT JOIN [SubCategories] AS [s] ON [c0].[Id] = [s].[CategoryId]
+ORDER BY [c0].[Id]
+2026-08-21 12:39:52.372 +04:00 [INF] Executed DbCommand (1ms) [Parameters=[@__slug_0='?' (Size = 80), @__ToLower_1='?' (Size = 50)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c0].[Id], [c0].[CreatedAt], [c0].[Description], [c0].[DisplayName], [c0].[Name], [c0].[Slug], [s].[Id], [s].[CategoryId], [s].[CreatedAt], [s].[Description], [s].[DisplayName], [s].[Name], [s].[Slug]
+FROM (
+    SELECT TOP(1) [c].[Id], [c].[CreatedAt], [c].[Description], [c].[DisplayName], [c].[Name], [c].[Slug]
+    FROM [Categories] AS [c]
+    WHERE [c].[Slug] = @__slug_0 OR LOWER([c].[Name]) = @__ToLower_1
+) AS [c0]
+LEFT JOIN [SubCategories] AS [s] ON [c0].[Id] = [s].[CategoryId]
+ORDER BY [c0].[Id]
+2026-08-21 12:39:52.412 +04:00 [INF] Executed DbCommand (2ms) [Parameters=[@__slug_0='?' (Size = 80), @__ToLower_1='?' (Size = 50)], CommandType='"Text"', CommandTimeout='30']
+SELECT [c0].[Id], [c0].[CreatedAt], [c0].[Description], [c0].[DisplayName], [c0].[Name], [c0].[Slug], [s].[Id], [s].[CategoryId], [s].[CreatedAt], [s].[Description], [s].[DisplayName], [s].[Name], [s].[Slug]
+FROM (
+    SELECT TOP(1) [c].[Id], [c].[CreatedAt], [c].[Description], [c].[DisplayName], [c].[Name], [c].[Slug]
+    FROM [Categories] AS [c]
+    WHERE [c].[Slug] = @__slug_0 OR LOWER([c].[Name]) = @__ToLower_1
+) AS [c0]
+LEFT JOIN [SubCategories] AS [s] ON [c0].[Id] = [s].[CategoryId]
+ORDER BY [c0].[Id]
+2026-08-21 12:39:52.478 +04:00 [INF] Genre catalog seeded
+2026-08-21 12:39:52.789 +04:00 [INF] Starting BookShop API...
+2026-08-21 12:39:52.851 +04:00 [INF] User profile is available. Using 'C:\Users\Javad\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-08-21 12:39:53.028 +04:00 [INF] Now listening on: http://localhost:7000
+2026-08-21 12:39:53.043 +04:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-21 12:39:53.063 +04:00 [INF] Hosting environment: Development
+2026-08-21 12:39:53.087 +04:00 [INF] Content root path: C:\Users\Javad\Downloads\truebookshoprealifinal\BookShopAPI
+2026-08-21 12:41:05.936 +04:00 [INF] Application is shutting down...

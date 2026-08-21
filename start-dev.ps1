@@ -13,7 +13,7 @@ if (-not (Test-Path "BookShopAPI") -or -not (Test-Path "frondbookshop")) {
 function Start-API {
     Write-Host "🔧 Starting BookShop API..." -ForegroundColor Yellow
     Set-Location "BookShopAPI"
-    Start-Process powershell -ArgumentList "-NoExit", "-Command", "dotnet run --urls=https://localhost:7000"
+    Start-Process powershell -ArgumentList "-NoExit", "-Command", "dotnet run --urls=http://localhost:7000"
     Set-Location ".."
 }
 
@@ -32,7 +32,7 @@ Start-Frontend
 
 Write-Host "✅ Both services are starting..." -ForegroundColor Green
 Write-Host "📱 Frontend: http://localhost:3000" -ForegroundColor Cyan
-Write-Host "🔗 API: https://localhost:7000" -ForegroundColor Cyan
-Write-Host "📚 API Docs: https://localhost:7000/swagger" -ForegroundColor Cyan
+Write-Host "🔗 API: http://localhost:7000" -ForegroundColor Cyan
+Write-Host "📚 API Docs: http://localhost:7000/swagger" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Press Ctrl+C to stop all services" -ForegroundColor Yellow
